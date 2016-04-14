@@ -23,7 +23,7 @@ data['TripDate'] = pd.to_datetime(data['TripDate'], format='%m/%d/%Y')
 
 #Query to select 'long' time series and 'long trips\
 query1 = data[data.SiteGroup=='long']                   #time series Length
-query1 = query1[query1.TripGroup=='long']               #Trip length
+query1 = query1[query1.TripGroup!='na']               #Trip length
 query1 = query1[query1.SitePart=='Eddy']                #Channel or eddy
 query1 = query1[query1.Plane_Height != 'minto8k']       #Elevation bins
 
@@ -65,12 +65,15 @@ merge2= merge2.reset_index()
 sub1 = merge2[['Site','TripDate','Percent_Vol']]
 sub1= sub1.set_index(['Site','TripDate'])
 
+n=0
+
+
 #Loop through sites
-#for Site , new_df in sub1.groupby(level=0):
-#    print Site
+for Site , new_df in sub1.groupby(level=0):
+    n += 1
     
 #loop through a list of numbers and check if its evenly divisible by 3
-list1 = xrange(27)
+list1 = xrange(n)
 
 #plot % volume vs. time
 t=sub1.unstack(level=0)
@@ -78,7 +81,7 @@ t=sub1.unstack(level=0)
 #counter for sites in t
 plot_counter = 0
 site_counter =0
-with PdfPages(r'C:\workspace\Sandbar_TimeSeries\Output\Full_Site_percent_vol_1.pdf') as pdf:
+with PdfPages(r'C:\workspace\Sandbar_TimeSeries\Output\Full_Site_percent_vol_4.pdf') as pdf:
     print 'pdf open'
     for i in list1:
         if site_counter == 0:                                   #This is the first run       
@@ -97,6 +100,9 @@ with PdfPages(r'C:\workspace\Sandbar_TimeSeries\Output\Full_Site_percent_vol_1.p
                 if plot_counter % 3 == 0:
                     print 'plot counter is at %s on the last plot on a page' %(plot_counter,)
                     t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter-1],rot=45,x_compat=True, marker='o')
+                    for ax in axes:
+                        ax.set_xlabel('Trip Date')
+                        ax.set_ylabel('% Volume')
                     pdf.savefig()                                   # saves the current figure into a pdf page
                     plt.close()
                     plot_counter = 0
@@ -107,9 +113,5 @@ with PdfPages(r'C:\workspace\Sandbar_TimeSeries\Output\Full_Site_percent_vol_1.p
                     plot_counter += 2
         site_counter += 1
 pdf.close            
-                     
+del pdf 
                     
-#fig,axes = plt.subplots(figsize=(10,10),nrows=3)
-#t[[12]].dropna(axis=0).plot(ax=axes[0],rot=45,x_compat=True, marker='o')
-#t[[13]].dropna(axis=0).plot(ax=axes[1],rot=45,x_compat=True, marker='o')
-#t[[14]].dropna(axis=0).plot(ax=axes[2],rot=45,x_compat=True, marker='o')
