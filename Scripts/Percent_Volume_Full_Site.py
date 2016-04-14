@@ -8,7 +8,7 @@ This is a temporary script file.
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
+from matplotlib.backends.backend_pdf import PdfPages
 
 
 #Read Data from file
@@ -59,9 +59,46 @@ merge2['Norm_vol'] = merge2.Volume/merge2.Max_Volume
 merge2['Percent_Vol']=(merge2.Volume-merge2.Early_Vol)/merge2.Early_Vol
 merge2 = merge2.set_index(['Site','TripDate'])
 
+
+#Subset master table for easier plotting
+merge2= merge2.reset_index()
+sub1 = merge2[['Site','TripDate','Percent_Vol']]
+sub1= sub1.set_index(['Site','TripDate'])
+
+#Loop through sites
+#for Site , new_df in sub1.groupby(level=0):
+#    print Site
+    
+#loop through a list of numbers and check if its evenly divisible by 3
+list1 = xrange(27)
+
 #plot % volume vs. time
-t=merge2.unstack(level=0)
-fig,axes = plt.subplots(figsize=(10,10),nrows=3)
-t[[12]].dropna(axis=0).plot(ax=axes[0],rot=45,x_compat=True, marker='o')
-t[[13]].dropna(axis=0).plot(ax=axes[1],rot=45,x_compat=True, marker='o')
-t[[14]].dropna(axis=0).plot(ax=axes[2],rot=45,x_compat=True, marker='o')
+t=sub1.unstack(level=0)
+
+#counter for sites in t
+plot_counter = 0
+site_counter =0
+with PdfPages(r'C:\workspace\Time_Series\Output\Full_Site_percent_vol.pdf') as pdf:
+    for i in list1:
+        if site_counter == 0:                                   #This is the first run       
+            fig,axes = plt.subplots(figsize=(10,10),nrows=3)
+            t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
+            plot_counter += 1                   
+        else:                                                   #This is the first run
+            if plot_counter+1 % 3 == 0:                         #Save last plot and reset plot counter
+                t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
+                pdf.savefig()                                   # saves the current figure into a pdf page
+                plt.close()
+                plot_counter == 0
+                print 'Saved page'
+            else:                                               #Keep on plotting                             
+                t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
+                plot_counter += 1
+        site_counter += 1
+del pdf                  
+                     
+                    
+#fig,axes = plt.subplots(figsize=(10,10),nrows=3)
+#t[[12]].dropna(axis=0).plot(ax=axes[0],rot=45,x_compat=True, marker='o')
+#t[[13]].dropna(axis=0).plot(ax=axes[1],rot=45,x_compat=True, marker='o')
+#t[[14]].dropna(axis=0).plot(ax=axes[2],rot=45,x_compat=True, marker='o')
