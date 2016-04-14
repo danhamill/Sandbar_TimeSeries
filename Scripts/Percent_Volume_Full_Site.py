@@ -13,7 +13,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 #Read Data from file
 #data = pd.read_csv(r'C:\workspace\Time_Series\test.csv', sep ='',index_col =[1,10])
-data = pd.read_csv(r'C:\workspace\Time_Series\SB_DB_Full_Site.csv', sep ='\t')
+data = pd.read_csv(r'C:\workspace\Sandbar_TimeSeries\SB_DB_Full_Site.csv', sep ='\t')
 
 #Drop ID column from csv
 data = data.drop(data.columns[[0]],axis=1)
@@ -78,24 +78,35 @@ t=sub1.unstack(level=0)
 #counter for sites in t
 plot_counter = 0
 site_counter =0
-with PdfPages(r'C:\workspace\Time_Series\Output\Full_Site_percent_vol.pdf') as pdf:
+with PdfPages(r'C:\workspace\Sandbar_TimeSeries\Output\Full_Site_percent_vol_1.pdf') as pdf:
+    print 'pdf open'
     for i in list1:
         if site_counter == 0:                                   #This is the first run       
+            print 'Making first plot'
             fig,axes = plt.subplots(figsize=(10,10),nrows=3)
             t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
-            plot_counter += 1                   
-        else:                                                   #This is the first run
-            if plot_counter+1 % 3 == 0:                         #Save last plot and reset plot counter
+            plot_counter += 1       
+            print 'Plot counter is at %s' %(plot_counter,)               
+        else:
+            if plot_counter == 0:               #This is the first plot on a page
+                fig,axes = plt.subplots(figsize=(10,10),nrows=3)
                 t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
-                pdf.savefig()                                   # saves the current figure into a pdf page
-                plt.close()
-                plot_counter == 0
-                print 'Saved page'
-            else:                                               #Keep on plotting                             
-                t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
-                plot_counter += 1
+                print 'Plot counter is at %s at the first plot on page' %(plot_counter,)                
+                plot_counter += 1    
+            else:                               #Either this is the last plot on the page or the second plot on a page
+                if plot_counter % 3 == 0:
+                    print 'plot counter is at %s on the last plot on a page' %(plot_counter,)
+                    t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter-1],rot=45,x_compat=True, marker='o')
+                    pdf.savefig()                                   # saves the current figure into a pdf page
+                    plt.close()
+                    plot_counter = 0
+                    print 'Saved page'
+                else:                                               #Keep on plotting                  
+                    print 'Plot counter is at %s at the second plot' %(plot_counter,)
+                    t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
+                    plot_counter += 2
         site_counter += 1
-del pdf                  
+pdf.close            
                      
                     
 #fig,axes = plt.subplots(figsize=(10,10),nrows=3)
