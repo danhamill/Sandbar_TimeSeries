@@ -37,9 +37,23 @@ def append_whole_sites(list_to_append, channel_part):
             dataMod2 = dataMod.assign(Processed_File = item.split('\\')[-1])
             vstack = pd.concat([vstack, dataMod2], axis=0)  
     return vstack
-############File Lists################################
-
-
+    
+def append_partal_sites(list_to_append, channel_part,suffix):
+    for item in list_to_append:
+        if item == list_to_append[0]:
+            data = pd.read_csv(item, sep=',', header=0)
+            data.Site = data.Site + suffix
+            dataMod = data.assign(SitePart = channel_part)
+            dataMod2 = dataMod.assign(Processed_File = item.split('\\')[-1])
+            vstack = dataMod2
+        else:
+            data = pd.read_csv(item, sep=',', header=0)
+            data.Site = data.Site + suffix
+            dataMod = data.assign(SitePart = channel_part)
+            dataMod2 = dataMod.assign(Processed_File = item.split('\\')[-1])
+            vstack = pd.concat([vstack, dataMod2], axis=0)  
+    return vstack
+    
 
 #Create lists of files to process for each bin
 chan = find_files('Channel_Low_Elevation.csv', [])
@@ -51,33 +65,37 @@ s_eddy_low = find_files('*_S_Low.csv', [])
 r_eddy_fz = find_files('*_R_Fluc.csv', [])
 s_eddy_fz = find_files('*_S_Fluc.csv', [])
 r_eddy_he = find_files('*_R_High.csv', [])
-S_eddy_he = find_files('*_S_High.csv', [])
+s_eddy_he = find_files('*_S_High.csv', [])
 
 
+#Append whole sites to output file
 tmp_list = append_whole_sites(chan,'Channel')
 tmp_list.to_csv(outFileName)
 
 tmp_list = append_whole_sites(eddy_low,'Eddy')
 tmp_list.to_csv(outFileName, mode='a', header=False)
 
+tmp_list = append_whole_sites(eddy_fz,'Eddy')
+tmp_list.to_csv(outFileName, mode='a', header=False)
 
+tmp_list = append_whole_sites(eddy_he,'Eddy')
+tmp_list.to_csv(outFileName, mode='a', header=False)
 
-#
-#list_to_append = chan
-#
-#if item==list_to_append[1]:
-#    print 'this works'
-#for item in chan: 
-#    item = chan[0]
-#    if item == chan[0]:
-#        data = pd.read_csv(item, sep=',', header=0)
-#        addSitePart = 'Channel'
-#        dataMod = data.assign(SitePart = addSitePart)
-#        dataMod2 = data.assign(Processed_File = item.split('\\')[-1])
-#        vstack = dataMod2
-#    else:
-#        data = pd.read_csv(item, sep=',', header=0)
-#        addSitePart = 'Channel'
-#        dataMod = data.assign(SitePart = addSitePart)
-#        dataMod2 = data.assign(Processed_File = item.split('\\')[-1])
-#        vstack = pd.concat([vstack, dataMod2], axis=0)
+tmp_list = append_partal_sites(s_eddy_low,'Eddy', '_s')
+tmp_list.to_csv(outFileName, mode='a', header=False)
+
+tmp_list = append_partal_sites(s_eddy_fz,'Eddy', '_s')
+tmp_list.to_csv(outFileName, mode='a', header=False)
+
+tmp_list = append_partal_sites(s_eddy_he,'Eddy', '_s')
+tmp_list.to_csv(outFileName, mode='a', header=False)
+
+tmp_list = append_partal_sites(r_eddy_low,'Eddy', '_r')
+tmp_list.to_csv(outFileName, mode='a', header=False)
+
+tmp_list = append_partal_sites(r_eddy_fz,'Eddy', '_r')
+tmp_list.to_csv(outFileName, mode='a', header=False)
+
+tmp_list = append_partal_sites(r_eddy_he,'Eddy', '_r')
+tmp_list.to_csv(outFileName, mode='a', header=False)
+
