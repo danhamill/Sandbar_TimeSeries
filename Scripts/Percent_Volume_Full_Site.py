@@ -13,7 +13,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 #Read Data from file
 #data = pd.read_csv(r'C:\workspace\Time_Series\test.csv', sep ='',index_col =[1,10])
-data = pd.read_csv(r'C:\workspace\Sandbar_TimeSeries\SB_DB_Full_Site.csv', sep ='\t')
+data = pd.read_csv(r'C:\workspace\Time_Series\SB_DB_Full_Site.csv', sep ='\t')
 
 #Drop ID column from csv
 data = data.drop(data.columns[[0]],axis=1)
@@ -65,34 +65,35 @@ merge2= merge2.reset_index()
 sub1 = merge2[['Site','TripDate','Percent_Vol']]
 sub1= sub1.set_index(['Site','TripDate'])
 
+
+
+
+#Count number of sites
 n=0
-
-
-#Loop through sites
 for Site , new_df in sub1.groupby(level=0):
     n += 1
     
-#loop through a list of numbers and check if its evenly divisible by 3
+#create a list to interate through the number of sites
 list1 = xrange(n)
 
-#plot % volume vs. time
+#Unstack sites for plotting
 t=sub1.unstack(level=0)
 
 #counter for sites in t
 plot_counter = 0
 site_counter =0
-with PdfPages(r'C:\workspace\Sandbar_TimeSeries\Output\Full_Site_percent_vol_4.pdf') as pdf:
+with PdfPages(r'C:\workspace\Time_Series\Output\Full_Site_percent_vol_5.pdf') as pdf:
     print 'pdf open'
     for i in list1:
         if site_counter == 0:                                   #This is the first run       
             print 'Making first plot'
-            fig,axes = plt.subplots(figsize=(10,10),nrows=3)
+            fig,axes = plt.subplots(figsize=(7,10.25),nrows=3)
             t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
             plot_counter += 1       
             print 'Plot counter is at %s' %(plot_counter,)               
         else:
             if plot_counter == 0:               #This is the first plot on a page
-                fig,axes = plt.subplots(figsize=(10,10),nrows=3)
+                fig,axes = plt.subplots(figsize=(7,10.25),nrows=3)
                 t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
                 print 'Plot counter is at %s at the first plot on page' %(plot_counter,)                
                 plot_counter += 1    
@@ -112,6 +113,6 @@ with PdfPages(r'C:\workspace\Sandbar_TimeSeries\Output\Full_Site_percent_vol_4.p
                     t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
                     plot_counter += 2
         site_counter += 1
-pdf.close            
+pdf.close()            
 del pdf 
                     
