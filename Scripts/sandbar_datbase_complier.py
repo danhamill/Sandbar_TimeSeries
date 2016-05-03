@@ -92,11 +92,11 @@ del lu_1, lu_2
 
 #Append maxiumum volumes in subsets
 data1= data[data.SitePart == 'Channel'].merge(chan_MaxVol,left_index=True,right_index=True,how='left')
-data2= data[(data.SitePart == 'Eddy') & (data.Plane_Height == '8kto25k')].merge(eddy_fz_MaxVol,left_index=True,right_index=True,how='left')
+data2= data[(data.SitePart == 'Eddy') & (data.Plane_Height == 'eddy8kto25k')].merge(eddy_fz_MaxVol,left_index=True,right_index=True,how='left')
 data3= data[(data.SitePart == 'Eddy')] 
 data3 = data3[data3['Plane_Height'].str.contains("minto")]
 data3 = data3.merge(eddy_low_MaxVol,left_index=True,right_index=True,how='left')
-data4= data[(data.SitePart == 'Eddy') & (data.Plane_Height == 'above25k')].merge(eddy_he_MaxVol,left_index=True,right_index=True,how='left')
+data4= data[(data.SitePart == 'Eddy') & (data.Plane_Height == 'eddyabove25k')].merge(eddy_he_MaxVol,left_index=True,right_index=True,how='left')
 
 del chan_MaxVol, eddy_fz_MaxVol, eddy_he_MaxVol, eddy_low_MaxVol
 
@@ -121,7 +121,8 @@ del data1,data2,chan_max_area,eddy_max_area
 lu_4 = pd.read_excel(ts_length)
 lu_4 = lu_4[['Trip_Date','Time_Series']]
 lu_4 = lu_4.rename(columns={'Trip_Date':'TripDate'})
-
+data = data.reset_index()
 data= data.merge(lu_4, on=['TripDate'], how='left' )
+data = data.set_index(['Site'])
 del lu_4
 data.to_csv(outFileName)
