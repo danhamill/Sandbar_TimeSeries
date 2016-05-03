@@ -8,10 +8,12 @@ This is a temporary script file.
 import pandas as pd
 import numpy as np
 
+
 max_vol = r'C:\workspace\Sandbar_Process\LU_Max_Vol.xlsx'
 bar_compile = r'C:\workspace\Sandbar_Process\csv_output\Sandbar_data.csv'
 bar_trip = r'C:\workspace\Sandbar_Process\LU_Site_location_time_Series.csv' 
 trip_dates = r'C:\workspace\Sandbar_Process\Date_Error_lookup.xlsx'
+ts_length = r'C:\workspace\sandbar_process\LU_Time_Series.xlsx'
 outFileName = r'C:\workspace\Sandbar_Process\Merged_Sandbar_data.csv'
 
 #Load in bar compile
@@ -115,4 +117,10 @@ data = pd.concat([data1,data2])
 
 del data1,data2,chan_max_area,eddy_max_area
 
+lu_4 = pd.read_excel(ts_length)
+lu_4 = lu_4[['Trip_Date','Time_Series']]
+lu_4 = lu_4.rename(columns={'Trip_Date':'TripDate'})
+
+data= data.merge(lu_4, on=['TripDate'], how='left' )
+del lu_4
 data.to_csv(outFileName)
