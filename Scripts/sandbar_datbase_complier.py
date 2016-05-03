@@ -68,7 +68,8 @@ del lu_3, data1, data2
 
 #Merge bar_compile with bar_trip
 data = data.set_index(['Site'])
-lu_1 = pd.read_csv(bar_trip, sep='\t',index_col=[0])
+lu_1 = pd.read_csv(bar_trip, sep=',',index_col=[0])
+lu_1 = lu_1.rename(columns={'Range':'SiteRange'})
 data = pd.merge(data,lu_1,left_index=True,right_index=True,how='left')
 
 #Load max_vol
