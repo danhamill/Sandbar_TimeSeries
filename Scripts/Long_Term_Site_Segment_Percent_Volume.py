@@ -64,7 +64,7 @@ gc_vol ['percent_vol'] = (gc_vol.Volume-gc_early_vol.Early_Vol[0])/gc_early_vol.
 gc_vol['percent_std_error'] = (gc_vol.std_error-gc_vol['std_error'][0])/gc_vol['std_error'][0]
 del gc_std, gc_count, gc_early_vol
 
-with PdfPages(r'C:\workspace\Time_Series\Output\Short_Term_percent_vol.pdf') as pdf:
+with PdfPages(r'C:\workspace\Time_Series\Output\Long_Term_percent_vol.pdf') as pdf:
     fig, ax = plt.subplots(figsize=(7,3),nrows=1)
     mc_vol.plot(y = 'percent_vol', yerr = mc_vol['percent_std_error'], ax = ax, label = 'Marble Canyon')
     gc_vol.plot(y = 'percent_vol', yerr = gc_vol['percent_std_error'], ax = ax, label = 'Grand Canyon')

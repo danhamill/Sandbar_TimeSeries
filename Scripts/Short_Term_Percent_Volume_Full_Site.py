@@ -13,19 +13,15 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 #Read Data from file
 #data = pd.read_csv(r'C:\workspace\Time_Series\test.csv', sep ='',index_col =[1,10])
-data = pd.read_csv(r'C:\workspace\Time_Series\SB_DB_Full_Site.csv', sep ='\t')
-
-#Drop ID column from csv
-data = data.drop(data.columns[[0]],axis=1)
+data = pd.read_csv(r'C:\workspace\sandbar_process\Merged_Sandbar_data.csv', sep =',')
 
 #Set Trip dates to pandas datetime
-data['TripDate'] = pd.to_datetime(data['TripDate'], format='%m/%d/%Y')
+data['TripDate'] = pd.to_datetime(data['TripDate'], format='%Y-%m-%d')
 
 #Query to select 'long' time series and 'long trips\
-query1 = data[data.SiteGroup=='long']                   #time series Length
-query1 = query1[query1.TripGroup!='na']               #Trip length
+query1 = data[data.SiteRange=='short']                   #time series Length
 query1 = query1[query1.SitePart=='Eddy']                #Channel or eddy
-query1 = query1[query1.Plane_Height != 'minto8k']       #Elevation bins
+query1 = query1[query1.Plane_Height != 'eddyminto8k']       #Elevation bins
 
 
 
@@ -51,9 +47,6 @@ merge2 = merge2.drop(merge2.columns[[-2]], axis=1)
 merge2 = merge2.drop(merge2.columns[[-2]], axis=1)
 merge2 = merge2.rename(columns = {'TripDate_x':'TripDate'})
 
-
-#Normalize the Volumes
-merge2['Norm_vol'] = merge2.Volume/merge2.Max_Volume
 
 #Calculate percent Volume
 merge2['Percent_Vol']=(merge2.Volume-merge2.Early_Vol)/merge2.Early_Vol
@@ -82,7 +75,7 @@ t=sub1.unstack(level=0)
 #counter for sites in t
 plot_counter = 0
 site_counter =0
-with PdfPages(r'C:\workspace\Time_Series\Output\Full_Site_percent_vol_5.pdf') as pdf:
+with PdfPages(r'C:\workspace\Time_Series\Output\Short_Term_Site_percent_vol.pdf') as pdf:
     print 'pdf open'
     for i in list1:
         if site_counter == 0:                                   #This is the first run       
@@ -112,7 +105,6 @@ with PdfPages(r'C:\workspace\Time_Series\Output\Full_Site_percent_vol_5.pdf') as
                     print 'Plot counter is at %s at the second plot' %(plot_counter,)
                     t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
                     plot_counter += 2
-        site_counter += 1
-pdf.close()            
+        site_counter += 1         
 del pdf 
                     
