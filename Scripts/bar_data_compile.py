@@ -99,3 +99,5 @@ tmp_list.to_csv(outFileName, mode='a', header=False)
 tmp_list = append_partal_sites(r_eddy_he,'Eddy', '_r')
 tmp_list.to_csv(outFileName, mode='a', header=False)
 
+del chan, eddy_fz, eddy_he, eddy_low,r_eddy_fz,r_eddy_he,r_eddy_low,s_eddy_fz,s_eddy_he,s_eddy_low, tmp_list, outFileName
+
