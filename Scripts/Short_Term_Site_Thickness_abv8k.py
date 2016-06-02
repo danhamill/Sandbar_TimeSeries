@@ -11,18 +11,19 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
 
-#Read database from file
+#Read Database from file
 data = pd.read_csv(r'C:\workspace\Time_Series\Merged_Sandbar_data.csv', sep =',')
 
 #Set Trip dates to pandas datetime
 data['TripDate'] = pd.to_datetime(data['TripDate'], format='%Y-%m-%d')
 
 #Query to select 'long' time series and 'long trips\
-query1 = data[data.SiteRange=='long']                   #time series Length
-query1 = query1[query1.SitePart=='Eddy']                #Channel or eddy
+query1 = data[data.SiteRange=='short']                      #time series Length
+query1 = query1[query1.SitePart=='Eddy']                    #Channel or eddy
 query1 = query1[query1.Plane_Height != 'eddyminto8k']       #Elevation bins
+query1 = query1[query1['TripDate']>'2002-01-01']            #Drop all surveys before they were officially monitored
 
-#Determine Volume and max_volume sum
+#Pivot and calculate thickness
 table1 = pd.pivot_table(query1, values=['Volume','Area_2D'], index=['Site','TripDate'], aggfunc=np.sum)
 table1['Thickness'] = table1.Volume/table1.Area_2D
 
@@ -45,7 +46,7 @@ t=sub1.unstack(level=0)
 #counter for sites in t
 plot_counter = 0
 site_counter =0
-with PdfPages(r'C:\workspace\Time_Series\Output\Long_Term_Site_Thickness_abv8k.pdf') as pdf:
+with PdfPages(r'C:\workspace\Time_Series\Output\Short_Term_Site_Thickness_abv8k.pdf') as pdf:
     print 'pdf open'
     for i in list1:
         if site_counter == 0:                                   #This is the first run       
@@ -67,7 +68,7 @@ with PdfPages(r'C:\workspace\Time_Series\Output\Long_Term_Site_Thickness_abv8k.p
                     for ax in axes:
                         ax.set_xlabel('Trip Date')
                         ax.set_ylabel('Thickness [m]')
-                    plt.suptitle('Thickness Eddy Above 8k')
+                    plt.suptitle('')
                     pdf.savefig()                                   # saves the current figure into a pdf page
                     plt.close()
                     plot_counter = 0
