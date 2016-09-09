@@ -55,10 +55,10 @@ cgc_early_vol = cgc_early_vol.rename(columns = {'Volume':'Early_Vol'})
 cgc_early_vol = pd.pivot_table(cgc_early_vol,values=['Early_Vol'], index=['TripDate'], aggfunc=np.sum)
 del table2
 #Associate Early_Vol with early dates
-cgc_vol = pd.pivot_table(query1, values=['Volume'], index=['TripDate'], aggfunc=np.sum)
-cgc_std = pd.pivot_table(query1, values=['Volume'], index=['TripDate'], aggfunc=np.std)
+cgc_vol = pd.pivot_table(query2, values=['Volume'], index=['TripDate'], aggfunc=np.sum)
+cgc_std = pd.pivot_table(query2, values=['Volume'], index=['TripDate'], aggfunc=np.std)
 cgc_std = cgc_std.rename(columns={'Volume':'std_dev'})
-cgc_count = pd.pivot_table(query1, values=['Volume'], index=['TripDate'], aggfunc='count')
+cgc_count = pd.pivot_table(query2, values=['Volume'], index=['TripDate'], aggfunc='count')
 cgc_count = cgc_count.rename(columns={'Volume':'count'})
 cgc_vol['std_error']=cgc_std.std_dev/np.sqrt(cgc_count['count'])
 cgc_vol ['percent_vol'] = (cgc_vol.Volume-cgc_early_vol.Early_Vol[0])/cgc_early_vol.Early_Vol[0]
@@ -78,10 +78,10 @@ wgc_early_vol = wgc_early_vol.rename(columns = {'Volume':'Early_Vol'})
 wgc_early_vol = pd.pivot_table(wgc_early_vol,values=['Early_Vol'], index=['TripDate'], aggfunc=np.sum)
 del table3
 #Associate Early_Vol with early dates
-wgc_vol = pd.pivot_table(query1, values=['Volume'], index=['TripDate'], aggfunc=np.sum)
-wgc_std = pd.pivot_table(query1, values=['Volume'], index=['TripDate'], aggfunc=np.std)
+wgc_vol = pd.pivot_table(query3, values=['Volume'], index=['TripDate'], aggfunc=np.sum)
+wgc_std = pd.pivot_table(query3, values=['Volume'], index=['TripDate'], aggfunc=np.std)
 wgc_std = wgc_std.rename(columns={'Volume':'std_dev'})
-wgc_count = pd.pivot_table(query1, values=['Volume'], index=['TripDate'], aggfunc='count')
+wgc_count = pd.pivot_table(query3, values=['Volume'], index=['TripDate'], aggfunc='count')
 wgc_count = wgc_count.rename(columns={'Volume':'count'})
 wgc_vol['std_error']=wgc_std.std_dev/np.sqrt(wgc_count['count'])
 wgc_vol ['percent_vol'] = (wgc_vol.Volume-wgc_early_vol.Early_Vol[0])/wgc_early_vol.Early_Vol[0]
