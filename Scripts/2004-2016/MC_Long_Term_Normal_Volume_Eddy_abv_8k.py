@@ -22,7 +22,7 @@ data['TripDate'] = pd.to_datetime(data['TripDate'], format='%Y-%m-%d')
 
 #Marble Canyon percent Volume
 query1 = data[(data.Segment != '2_LMC') &(data.Segment != '3_EGC') & (data.Segment != '4_CGC') & (data.Segment != '5_WGC') & 
-(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')]
+(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')& (data.Bar_type != 'Total')& (data.Time_Series == 'short')]
 query1 = query1[query1['TripDate'] > '2004-01-01']
 
 temp = query1
@@ -42,7 +42,7 @@ table1 = table1.merge(tmp_pvt, left_index=True, right_index=True, how='left')
 del temp, tmp_pvt, tmp_count
 #Lower Marble Canyon
 query2 = data[(data.Segment != '1_UMC') & (data.Segment != '3_EGC') & (data.Segment != '4_CGC') & (data.Segment != '5_WGC') & 
-(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')]
+(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')& (data.Bar_type != 'Total')& (data.Time_Series == 'short')]
 query2 = query2[query2['TripDate'] > '2004-01-01']
 
 #calculate std error

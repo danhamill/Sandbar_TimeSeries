@@ -21,7 +21,7 @@ data['TripDate'] = pd.to_datetime(data['TripDate'], format='%Y-%m-%d')
 
 
 #Subset to Marble Canyon
-query1 = data[(data.Segment != '3_EGC') & (data.Segment != '4_CGC') & (data.Segment != '5_WGC')  & (data.Segment != '0_Glen')& 
+query1 = data[(data.Segment != '3_EGC') & (data.Segment != '4_CGC') & (data.Segment != '5_WGC') & (data.Segment != '0_Glen') &
 (data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long') & (data.Time_Series == 'short') & (data.Bar_type != 'Total')]
 query1 = query1[query1['TripDate'] > '2004-01-01']
 #Determine what the earliest survey was for each site
@@ -45,7 +45,7 @@ del temp, tmp_pvt, tmp_count
 
 #Grand Canyon percent Volume
 query2 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '0_Glen') &
-(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long') & (data.Time_Series == 'short') & (data.Bar_type != 'Total')]
+(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='short') & (data.Time_Series == 'short') & (data.Bar_type != 'Total')]
 query2 = query2[query2['TripDate'] > '2004-01-01']
 
 temp = query2
@@ -64,12 +64,12 @@ table2 = table2.merge(tmp_pvt, left_index=True, right_index=True, how='left')
 del temp, tmp_pvt, tmp_count
 
 
-with PdfPages(r'C:\workspace\Time_Series\Output\2004-2015\Reach_Long_Term_Normalized_Volume_w_error_bars_2004.pdf') as pdf:
+with PdfPages(r'C:\workspace\Time_Series\Output\2004-2015\Reach_short_Term_Normalized_Volume_w_error_bars_2004.pdf') as pdf:
     fig, ax = plt.subplots(figsize=(7,3),nrows=1)
     table1.plot(y = 'NormVol', yerr='std_error', ax = ax, label = 'Marble Canyon',ylim=(0,1.1), marker = 'o')
     table2.plot(y = 'NormVol', yerr='std_error',ax = ax, label = 'Grand Canyon',ylim=(0,1.1), marker = 'o')
     ax.set_ylabel('Normalized Volume [m$^3$/m$^3$]')
-    ax.set_title('Long Term Monitoring Sites: eddy above 8k')   
+    ax.set_title('Short Term Monitoring Sites: eddy above 8k')   
     pdf.savefig()
     plt.close()
 del pdf

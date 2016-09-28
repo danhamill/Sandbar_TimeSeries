@@ -6,7 +6,7 @@ Created on Fri Jun 10 10:18:58 2016
 """
 import pandas as pd
 import numpy as np
-data = pd.read_csv(r'C:\workspace\sandbar_process\Merged_Sandbar_data.csv', sep =',')
+data = pd.read_csv("C:\workspace\Reach_4a\Multibeam\xyz\2012_05\stats\mb_2102_stdev_025m.asc", sep =',')
 query1 = data[(data['SurveyDate']>'2014-01-01') & (data['SurveyDate']<'2015-01-01')]
 query2 = data[ (data['SurveyDate']>'2015-01-01')]
 data = data.reset_index()

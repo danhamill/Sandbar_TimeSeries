@@ -22,7 +22,7 @@ data['TripDate'] = pd.to_datetime(data['TripDate'], format='%Y-%m-%d')
 
 #Eastern Grand Canyon
 query1 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '4_CGC') & (data.Segment != '5_WGC') & 
-(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')]
+(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')& (data.Bar_type != 'Total')& (data.Time_Series == 'short')]
 query1 = query1[query1['TripDate'] > '2004-01-01']
 
 #Determine errors for norm volume
@@ -46,7 +46,7 @@ del temp, tmp_pvt, tmp_count
 
 #Central Grand Canyon
 query2 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '3_EGC') & (data.Segment != '5_WGC') & 
-(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')]
+(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')& (data.Bar_type != 'Total')& (data.Time_Series == 'short')]
 query2 = query2[query2['TripDate'] > '2004-01-01']
 
 temp = query2
@@ -66,7 +66,7 @@ del temp, tmp_pvt, tmp_count
 
 #Western Grand Canyon
 query3 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '3_EGC') & (data.Segment != '4_CGC') & 
-(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')]
+(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')& (data.Bar_type != 'Total')& (data.Time_Series == 'short')]
 query3 = query3[query3['TripDate'] > '2004-01-01']
 
 temp = query3

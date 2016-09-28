@@ -22,7 +22,7 @@ data['TripDate'] = pd.to_datetime(data['TripDate'], format='%Y-%m-%d')
 query1 = data[data.SiteRange=='short']                   #time series Length
 query1 = query1[query1.SitePart=='Eddy']                #Channel or eddy
 query1 = query1[query1.Plane_Height != 'eddyminto8k']       #Elevation bins
-
+#query1 = query1[query1['TripDate'] > '2004-01-01']
 
 
 #Determine Volume and max_volume sum
@@ -70,39 +70,40 @@ list1 = xrange(n)
 
 #Unstack sites for plotting
 t=sub1.unstack(level=0)
+t.columns = t.columns.droplevel()
 
 #counter for sites in t
 plot_counter = 0
 site_counter =0
-with PdfPages(r'C:\workspace\Time_Series\Output\Short_Term_Site_norm_vol.pdf') as pdf:
+with PdfPages(r'C:\workspace\Time_Series\Output\Short_Term_Site_norm_vol_all.pdf') as pdf:
     print 'pdf open'
     for i in list1:
         if site_counter == 0:                                   #This is the first run       
             print 'Making first plot'
-            fig,axes = plt.subplots(figsize=(7,10.25),nrows=3)
-            t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
+            fig,axes = plt.subplots(figsize=(7,10.25), nrows=3, sharex=True)
+            t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o', fontsize=8, ylim=[0,1.1])
             plot_counter += 1       
             print 'Plot counter is at %s' %(plot_counter,)               
         else:
             if plot_counter == 0:               #This is the first plot on a page
-                fig,axes = plt.subplots(figsize=(7,10.25),nrows=3)
-                t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
+                fig,axes = plt.subplots(figsize=(7,10.25), nrows=3, sharex=True)
+                t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o', fontsize=8, ylim=[0,1.1])
                 print 'Plot counter is at %s at the first plot on page' %(plot_counter,)                
                 plot_counter += 1    
             else:                               #Either this is the last plot on the page or the second plot on a page
                 if plot_counter % 3 == 0:
                     print 'plot counter is at %s on the last plot on a page' %(plot_counter,)
-                    t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter-1],rot=45,x_compat=True, marker='o')
+                    t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter-1],rot=45,x_compat=True, marker='o', fontsize=8, ylim=[0,1.1])
                     for ax in axes:
                         ax.set_xlabel('Trip Date')
-                        ax.set_ylabel('% Volume')
+                        ax.set_ylabel('Normalized Volume')
                     pdf.savefig()                                   # saves the current figure into a pdf page
                     plt.close()
                     plot_counter = 0
                     print 'Saved page'
                 else:                                               #Keep on plotting                  
                     print 'Plot counter is at %s at the second plot' %(plot_counter,)
-                    t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o')
+                    t[[site_counter]].dropna(axis=0).plot(ax=axes[plot_counter],rot=45,x_compat=True, marker='o', fontsize=8, ylim=[0,1.1])
                     plot_counter += 2
         site_counter += 1         
 del pdf 

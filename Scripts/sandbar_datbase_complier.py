@@ -1,13 +1,39 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
+NAU Sandbar Database Compiler
+Created by: Daniel Hamill
+Description:  This script was developed to compile the sandbar database into a single CSV file.
 
-This is a temporary script file.
+Inputs:
+max_vol = Microsoft excel file contining the tabulated maximim volumes and areas
+bar_compile = Compile binvol files from the bar_data_compile.py script
+bar_trip = Lookup table contining river segments (i.e. UMC,LMC,EGC,...), and time series length (i.e. short or long term montioring site)
+trip_dates = Look up table to assoicate survey dates with trip dates
+ts_length = Worksheet to predict if the length of the tirp length.  Short=complete trip after 2002, Long=complete trip before 2002, na=partial trip.
+outFileName = Specified output file name
+bar_type = Look up table to predict sand bar type (i.e. sep, reatt, undiff)
+
+Output Columns:
+Site- Site Location padded to 3 digits (i.e. 003L)
+SurveyDate	- Date of survey
+Plane_Height - Elevation bin
+Area_2D - 
+Area_3D -	
+Volume -
+Errors -	
+SitePart - Channel or eddy	
+Processed_File - Input file
+TripDate - Begininng date of survey trip
+SiteRange - Short or long term monitoring site
+Segment - Canyon Section
+MaxVol - Maximum Volume
+Bar_type - Sand bar type
+Max_Area - Maximum area
+Time_Series - Complte or partial trip: Short=complete trip after 2002, Long=complete trip before 2002, na=partial trip.
+
 """
 
 import pandas as pd
-import numpy as np
-
 
 max_vol = r'C:\workspace\Sandbar_Process\LU_Max_Vol.xlsx'
 bar_compile = r'C:\workspace\Sandbar_Process\csv_output\Sandbar_data.csv'
@@ -15,6 +41,8 @@ bar_trip = r'C:\workspace\Sandbar_Process\LU_Site_location_time_Series.csv'
 trip_dates = r'C:\workspace\Sandbar_Process\Date_Error_lookup.xlsx'
 ts_length = r'C:\workspace\sandbar_process\LU_Time_Series.xlsx'
 outFileName = r'C:\workspace\Sandbar_Process\Merged_Sandbar_data.csv'
+bar_type = r'C:\workspace\sandbar_process\LU_Bar_type.csv'
+
 
 #Load in bar compile
 data = pd.read_csv(bar_compile, sep=',')
@@ -54,11 +82,13 @@ data = data.drop(data.columns[[-2]],axis=1)
 
 #Add Dates for sep and reatt bars
 data1 = data[data.TripDate.isnull()]
+data1 = data1.set_index(['Site'])
+data1.index = data1.index.str.lower()
 data1 = data1.reset_index()
 data1['tmpsite'] = data1['Site'].str[:4]
 data1 = data1.merge(lu_3,left_on = ['tmpsite','SurveyDate','Plane_Height'],right_on = ['Site','SurveyDate','Plane_Height'],how='left')
 data1 = data1.drop(data1.columns[-5:-1],axis=1)
-data1 = data1.drop(data1.columns[0],axis=1)
+#data1 = data1.drop(data1.columns[0],axis=1)
 data1 = data1.rename(columns = {'TripDate_y': 'TripDate'})
 data1 = data1.rename(columns = {'Site_x': 'Site'})
 data2 = data[data.TripDate.notnull()]
@@ -90,6 +120,8 @@ chan_max_area = lu_2[['Max_Area_Channel']].dropna(axis=0)
 chan_max_area = chan_max_area.rename(columns={'Max_Area_Channel':'Max_Area'})
 del lu_1, lu_2
 
+data.index = data.index.str.lower()
+
 #Append maxiumum volumes in subsets
 data1= data[data.SitePart == 'Channel'].merge(chan_MaxVol,left_index=True,right_index=True,how='left')
 data2= data[(data.SitePart == 'Eddy') & (data.Plane_Height == 'eddy8kto25k')].merge(eddy_fz_MaxVol,left_index=True,right_index=True,how='left')
@@ -105,14 +137,21 @@ frames = [data1,data2,data3,data4]
 data = pd.concat(frames)
 
 del data1, data2, data3, data4, frames
-#Get rid of total eddy records
 
-data = data[np.isfinite(data['MaxVol'])]
+
+#Merge Bar type
+LU_bar_type = pd.read_csv(bar_type,sep=',',index_col=[0])
+LU_bar_type.index = LU_bar_type.index.str.lower()
+data = pd.merge(data,LU_bar_type,left_index=True,right_index=True,how='left')
+
+
+#Get rid of total eddy records
+#data = data[np.isfinite(data['MaxVol'])]
 
 #Merge max areas
-data1= data[(data.SitePart == 'Eddy')] 
+data1 = data[(data.SitePart == 'Eddy')] 
 data1 = data1.merge(eddy_max_area,left_index=True,right_index=True,how='left')
-data2= data[(data.SitePart == 'Channel')] 
+data2 = data[(data.SitePart == 'Channel')] 
 data2 = data2.merge(chan_max_area,left_index=True,right_index=True,how='left')
 data = pd.concat([data1,data2])
 
@@ -124,5 +163,7 @@ lu_4 = lu_4.rename(columns={'Trip_Date':'TripDate'})
 data = data.reset_index()
 data= data.merge(lu_4, on=['TripDate'], how='left' )
 data = data.set_index(['Site'])
+
 del lu_4
+
 data.to_csv(outFileName)

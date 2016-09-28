@@ -21,16 +21,17 @@ data['TripDate'] = pd.to_datetime(data['TripDate'], format='%Y-%m-%d')
 
 
 #Eastern Grand Canyon
-query1 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '4_CGC') & (data.Segment != '5_WGC') & 
-(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')]
+query1 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '4_CGC') & (data.Segment != '5_WGC') & (data.Segment != '0_Glen') &
+(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long') & (data.Time_Series == 'long')& (data.Bar_type != 'Total')]
 query1 = query1[query1['TripDate'] < '2004-01-01']
 
 #Determine errors for norm volume
 temp = query1
+temp = pd.pivot_table(temp,values=['Volume','MaxVol'],index=['Site','SurveyDate','TripDate'], aggfunc= np.sum)
 temp['NormVol'] = temp['Volume']/temp['MaxVol']
-tmp_pvt = pd.pivot_table(temp, values=['NormVol'], index=['TripDate'], aggfunc=np.std)
+tmp_pvt = pd.pivot_table(temp.reset_index(), values=['NormVol'], index=['TripDate'], aggfunc=np.std)
 tmp_pvt = tmp_pvt.rename(columns={'NormVol':'std_dev'})
-tmp_count = pd.pivot_table(temp,values=['NormVol'], index=['TripDate'], aggfunc='count')
+tmp_count = pd.pivot_table(temp.reset_index(),values=['NormVol'], index=['TripDate'], aggfunc='count')
 tmp_count = tmp_count.rename(columns={'NormVol':'count'})
 tmp_pvt['std_error'] = tmp_pvt['std_dev']/np.sqrt(tmp_count['count'])
 tmp_pvt = tmp_pvt[['std_error']]
@@ -42,15 +43,16 @@ table1 = table1[['NormVol']]
 table1 = table1.merge(tmp_pvt, left_index=True, right_index=True, how='left')
 del temp, tmp_pvt, tmp_count
 #Central Grand Canyon
-query2 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '3_EGC') & (data.Segment != '5_WGC') & 
+query2 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '3_EGC') & (data.Segment != '5_WGC') & (data.Segment != '0_Glen') &
 (data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')]
 query2 = query2[query2['TripDate'] < '2004-01-01']
 
 temp = query2
+temp = pd.pivot_table(temp,values=['Volume','MaxVol'],index=['Site','SurveyDate','TripDate'], aggfunc= np.sum)
 temp['NormVol'] = temp['Volume']/temp['MaxVol']
-tmp_pvt = pd.pivot_table(temp, values=['NormVol'], index=['TripDate'], aggfunc=np.std)
+tmp_pvt = pd.pivot_table(temp.reset_index(), values=['NormVol'], index=['TripDate'], aggfunc=np.std)
 tmp_pvt = tmp_pvt.rename(columns={'NormVol':'std_dev'})
-tmp_count = pd.pivot_table(temp,values=['NormVol'], index=['TripDate'], aggfunc='count')
+tmp_count = pd.pivot_table(temp.reset_index(),values=['NormVol'], index=['TripDate'], aggfunc='count')
 tmp_count = tmp_count.rename(columns={'NormVol':'count'})
 tmp_pvt['std_error'] = tmp_pvt['std_dev']/np.sqrt(tmp_count['count'])
 tmp_pvt = tmp_pvt[['std_error']]
@@ -62,7 +64,7 @@ table2 = table2.merge(tmp_pvt, left_index=True, right_index=True, how='left')
 del temp, tmp_pvt, tmp_count
 
 #Western Grand Canyon
-query3 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '3_EGC') & (data.Segment != '4_CGC') & 
+query3 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '3_EGC') & (data.Segment != '4_CGC') & (data.Segment != '0_Glen') &
 (data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')]
 query3 = query3[query3['TripDate'] < '2004-01-01']
 

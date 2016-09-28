@@ -94,7 +94,7 @@ with PdfPages(r'C:\workspace\Time_Series\Output\2004-2015\GC_long_Term_percent_v
     egc_vol.plot(y = 'percent_vol', yerr = egc_vol['percent_std_error'], ax = ax, label = 'Eastern Grand Canyon')
     cgc_vol.plot(y = 'percent_vol', yerr = cgc_vol['percent_std_error'], ax = ax, label = 'Central Grand Canyon')
     wgc_vol.plot(y = 'percent_vol', yerr = wgc_vol['percent_std_error'], ax = ax, label = 'Western Grand Canyon')
-    ax.set_ylabel('Percent Volume \n Normalized to 1990 volume')
+    ax.set_ylabel('Percent Volume \n Normalized to 2004 volume')
     ax.set_title('Long Term Monitoring Sites')   
     pdf.savefig()
     plt.close()

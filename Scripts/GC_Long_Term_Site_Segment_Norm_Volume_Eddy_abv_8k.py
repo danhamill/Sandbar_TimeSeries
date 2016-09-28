@@ -33,7 +33,7 @@ table1 = table1[['NormVol']]
 
 #Central Grand Canyon
 query2 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '3_EGC') & (data.Segment != '5_WGC') & 
-(data.SitePart == 'Eddy') & (data.Plane_Height == 'eddyminto8k') & (data.SiteRange=='long')]
+(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')]
 
 table2 = pd.pivot_table(query2, values=['Volume', 'MaxVol'], index=['TripDate'], aggfunc=np.sum)
 table2['NormVol']= table2['Volume']/table2['MaxVol']
@@ -41,13 +41,13 @@ table2 = table2[['NormVol']]
 
 #Western Grand Canyon
 query3 = data[(data.Segment != '1_UMC') & (data.Segment != '2_LMC') & (data.Segment != '3_EGC') & (data.Segment != '4_CGC') & 
-(data.SitePart == 'Eddy') & (data.Plane_Height == 'eddyminto8k') & (data.SiteRange=='long')]
+(data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.SiteRange=='long')]
 
 table3 = pd.pivot_table(query3, values=['Volume', 'MaxVol'], index=['TripDate'], aggfunc=np.sum)
 table3['NormVol']= table3['Volume']/table3['MaxVol']
 table3 = table3[['NormVol']]
 
-with PdfPages(r'C:\workspace\Time_Series\Output\GC_long_Term_Norm_Vol_eddyabv25k.pdf') as pdf:
+with PdfPages(r'C:\workspace\Time_Series\Output\GC_long_Term_Norm_Vol_eddyabv8k.pdf') as pdf:
     fig, ax = plt.subplots(figsize=(7,6),nrows=1)
     table1.plot(y = 'NormVol', ax = ax, label = 'Eastern Grand Canyon')
     table2.plot(y = 'NormVol', ax = ax, label = 'Central Grand Canyon')
