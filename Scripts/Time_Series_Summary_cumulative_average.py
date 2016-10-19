@@ -34,7 +34,7 @@ def volume_data(df,section=None):
     tmp_pvt = tmp_pvt.rename(columns={'Volume':'std_dev'})
     tmp_count = pd.pivot_table(df,values=['Volume'], index=['TripDate'], aggfunc='count')
     tmp_count = tmp_count.rename(columns={'Volume':'count'})
-    tmp_pvt['std_error'] = tmp_pvt['std_dev']/np.sqrt(tmp_count['count'])
+    tmp_pvt['std_error'] = tmp_pvt['std_dev']#/np.sqrt(tmp_count['count'])
     yerr = tmp_pvt[['std_error']]
     del tmp_count, tmp_pvt
     tmp_pvt = pd.pivot_table(df, values=['Volume'], index=['TripDate'], aggfunc=np.average)
@@ -48,7 +48,7 @@ def area_data(df,section=None):
     tmp_pvt = tmp_pvt.rename(columns={'Area_2D':'std_dev'})
     tmp_count = pd.pivot_table(df,values=['Area_2D'], index=['TripDate'], aggfunc='count')
     tmp_count = tmp_count.rename(columns={'Area_2D':'count'})
-    tmp_pvt['std_error'] = tmp_pvt['std_dev']/np.sqrt(tmp_count['count'])
+    tmp_pvt['std_error'] = tmp_pvt['std_dev']#/np.sqrt(tmp_count['count'])
     yerr = tmp_pvt[['std_error']]
     tmp_pvt = pd.pivot_table(df, values=['Area_2D'], index=['TripDate'], aggfunc=np.average)
     tmp_pvt['y_err']=yerr
@@ -138,8 +138,8 @@ ax2.set_xlim([-.45, .2])
 ax1.set_ylabel('Volume $m^3$') 
 ax2.set_ylabel('Area $m^2$') 
 ax1.set_xticks([-.23, 0]) 
-ax2.set_ylim(0,3000)
-ax1.set_ylim(0,3000)
+ax2.set_ylim(-1000,6000)
+ax1.set_ylim(-1000,6000)
 ax1.set_xticklabels([1990, 2015], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
@@ -158,8 +158,8 @@ ax2.set_xlim([-.45, .2])
 ax1.set_ylabel('Volume $m^3$') 
 ax2.set_ylabel('Area $m^2$') 
 ax1.set_xticks([-.23, 0]) 
-ax2.set_ylim(0,3000)
-ax1.set_ylim(0,3000)
+ax2.set_ylim(-1000,6000)
+ax1.set_ylim(-1000,6000)
 ax1.set_xticklabels([1990, 2015], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
@@ -177,15 +177,15 @@ ax2.set_xlim([-.45, .2])
 ax1.set_ylabel('Volume $m^3$') 
 ax2.set_ylabel('Area $m^2$') 
 ax1.set_xticks([-.23, 0]) 
-ax2.set_ylim(0,3000)
-ax1.set_ylim(0,3000)
+ax2.set_ylim(-1000,6000)
+ax1.set_ylim(-1000,6000)
 ax1.set_xticklabels([1990, 2015], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
 plt.suptitle('Long Term Monitoring Sites',fontsize=14)
 plt.tight_layout(pad=2.2)
-plt.savefig(r"C:\workspace\Time_Series\output\Long_Term_Monitoring_Sites_Summary_std_dev_error_bars.png", dpi=600)
-#plt.show()
+plt.savefig(r"C:\workspace\Time_Series\output\Long_Term_Monitoring_Sites_Summary_std_dev_error_bars_average.png", dpi=600)
+plt.show()
 
 
 
