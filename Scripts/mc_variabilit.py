@@ -50,71 +50,68 @@ def change_finder(extra_sites,long_term, all_sites):
         all_s = pd.pivot_table(all_s.reset_index(), index=['TripDate'], values=['Norm_Vol'])
         
         if n == 0:
-            print n
             in_df=None
             df_back = merge_df(long_t,all_s,drop_site,in_df)
         else:
-            print n
             df_back = merge_df(long_t,all_s,drop_site,df_back)
         
     return df_back
         
 def merge_df(long_t,all_s, drop_site,in_df):
     if in_df is None:
-        print 'Thinks in_df is None...'
-        vol_diff = long_t['Norm_Vol'].sum(axis=0)-all_s['Norm_Vol'].sum(axis=0)
+        vol_diff = (-long_t['Norm_Vol'].sum(axis=0)+all_s['Norm_Vol'].sum(axis=0))/(all_s['Norm_Vol'].sum(axis=0))
         out_df = pd.DataFrame(data=[vol_diff], columns=['Vol_Change'],index=[drop_site])
         return out_df
     elif in_df is not None:
-        print 'Found in_df...'
-        vol_diff = long_t['Norm_Vol'].sum(axis=0)-all_s['Norm_Vol'].sum(axis=0)
+        vol_diff = (-long_t['Norm_Vol'].sum(axis=0)+all_s['Norm_Vol'].sum(axis=0))/(all_s['Norm_Vol'].sum(axis=0))
         out_df = pd.concat([in_df,pd.DataFrame(data=[vol_diff], columns=['Vol_Change'],index=[drop_site])])
         return out_df
 
-if platform.system() == 'Darwin':
-    db_file = '/Users/danielhamill/git_clones/sandbar_process/Merged_Sandbar_data.csv'
-    lt_sites ='/Users/danielhamill/git_clones/Time_Series/sites.xlsx'
-    oName = '/Users/danielhamill/git_clones/Time_Series/output/mc_variability.png'
-elif platform.system() == 'Windows':
-    db_file = r'C:\workspace\sandbar_process\Merged_Sandbar_data.csv'
-    lt_sites = r"C:\workspace\Time_Series\sites.xlsx"
-    oName = r'C:\workspace\Time_Series\output\mc_variability.png'
+if __name__ == '__main__':
+    if platform.system() == 'Darwin':
+        db_file = '/Users/danielhamill/git_clones/sandbar_process/Merged_Sandbar_data.csv'
+        lt_sites ='/Users/danielhamill/git_clones/Time_Series/sites.xlsx'
+        oName = '/Users/danielhamill/git_clones/Time_Series/output/mc_variability.png'
+    elif platform.system() == 'Windows':
+        db_file = r'C:\workspace\sandbar_process\Merged_Sandbar_data.csv'
+        lt_sites = r"C:\workspace\Time_Series\sites.xlsx"
+        oName = r'C:\workspace\Time_Series\output\mc_variability.png'
+        
+    #Load Database    
+    data = pd.read_csv(db_file,sep=',')    
     
-#Load Database    
-data = pd.read_csv(db_file,sep=',')    
-
-#Load long term monitoring sites
-lu_sites = pd.read_excel(lt_sites)
-lu_sites = lu_sites[['Sediment Deficit Sites']].dropna()
-
-
-#Subset long term monitoring sites
-long_term = data[data['Site'].isin(set(lu_sites['Sediment Deficit Sites']))]
-  
-
-#Get data for plotting
-long_term = query_df(long_term)
-all_sites = query_df(data)
-all_sites = all_sites.query('Bar_type != "Total"')
-
-#Find extra sites
-all_site_df = pd.DataFrame(data=all_sites.Site.unique(),columns=['Site'])
-lt_site_df = pd.DataFrame(data=long_term.Site.unique(),columns=['Site'])
-extra_sites = all_site_df[~all_site_df.isin(set(lt_site_df['Site']))].dropna()
-
-#find influence of extra sites
-influence_df = change_finder(extra_sites,long_term,all_sites)
-
-#Data to plot                 
-long_term = pivot_df(long_term)
-all_sites = pivot_df(all_sites)
-
-fig,ax = plt.subplots()
-long_term.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=12',color='blue',marker='o')
-all_sites.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=30',color='green',linestyle='--',marker='x')
-plt.tight_layout()
-#plt.savefig(oName,dpi=600)
-plt.show()
+    #Load long term monitoring sites
+    lu_sites = pd.read_excel(lt_sites)
+    lu_sites = lu_sites[['Sediment Deficit Sites']].dropna()
+    
+    
+    #Subset long term monitoring sites
+    long_term = data[data['Site'].isin(set(lu_sites['Sediment Deficit Sites']))]
+      
+    
+    #Get data for plotting
+    long_term = query_df(long_term)
+    all_sites = query_df(data)
+    all_sites = all_sites.query('Bar_type != "Total"')
+    
+    #Find extra sites
+    all_site_df = pd.DataFrame(data=all_sites.Site.unique(),columns=['Site'])
+    lt_site_df = pd.DataFrame(data=long_term.Site.unique(),columns=['Site'])
+    extra_sites = all_site_df[~all_site_df.isin(set(lt_site_df['Site']))].dropna()
+    
+    #find influence of extra sites
+    influence_df = change_finder(extra_sites,long_term,all_sites)
+    
+    #Data to plot                 
+    long_term = pivot_df(long_term)
+    all_sites = pivot_df(all_sites)
+    
+    fig,ax = plt.subplots()
+    long_term.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=12',color='blue',marker='o')
+    all_sites.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=30',color='green',linestyle='--',marker='x')
+    plt.tight_layout()
+    #plt.savefig(oName,dpi=600)
+    plt.show()
 
 
 
