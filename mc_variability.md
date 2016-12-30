@@ -1,7 +1,7 @@
 # Marble Canyon Sample Size Analysis
 
 ## Problem Statement
-Since 1990 NAU and USGS have been monitoring sandbars in Marble to determine how Glen Canyon Dam operations affect the size and volumes of exposed sand.  Initially, 12 long-term monitoring sites (Table 1) were estabilished as representative sample of the sandbars within Marble CAnyon.  The selected montoring sites were spaitally distributed throughout Marble Canyon and were surveyed using total stations at irregular time intervals to determine sand volumes.  In 2002, an addtional 11 sandbars were selected for long-term monitoring (Table 1) in efforts to obtain a sample that is more resprenative of Marble Canyon.  These sites were choosen using expert judgement and typically contained large volumes of sand.  Finally in 2008, an additional 4 sites (Table 1) were selected for long-term monitoring.  The effects of increasing sample size on long-term trends of sandbar volumes is largely unknown and will be anayzed throghout this vignette.  The data used in this anasis were collected between 11/2003 and 1/2016.
+Since 1990 NAU and USGS have been monitoring sandbars in Marble to determine how Glen Canyon Dam operations affect the size and volumes of exposed sand.  Initially, 12 long-term monitoring sites (Table 1) were established as a representative sample of the sandbars within Marble Canyon.  The selected monitoring sites were spatially distributed throughout Marble Canyon and were surveyed using total stations at irregular time intervals to determine sand volumes.  In 2002, an additional 11 sandbars were selected for long-term monitoring (Table 1) in efforts to obtain a sample that is more respective of Marble Canyon.  These sites were chosen using expert judgment and typically contained large volumes of sand.  Finally, in 2008, an additional 4 sites (Table 1) were selected for long-term monitoring.  The effects of increasing sample size on long-term trends of sandbar volumes are largely unknown and will be analyzed throughout this vignette.  The data used in this analysis were collected between 11/2003 and 1/2016.
 
 #### Table 1: Marble Canyon Monitoring sites
 | Sites Added in 1990 |Sites Added in 2002|Sites added in 2008|
@@ -11,7 +11,7 @@ Since 1990 NAU and USGS have been monitoring sandbars in Marble to determine how
 |016l  | 033l |
 |022r  | 035_s |
 |030r  | 041l_s |
-|032r  |041l_r |
+|032r  | 041l_r |
 |043l  | 044l_r |
 |044l_s| 045l_s |
 |047r  | 045l_r |
@@ -19,8 +19,9 @@ Since 1990 NAU and USGS have been monitoring sandbars in Marble to determine how
 |050r_s| 056_r |
 |051l  |
 
+**Where does 035l_r go???**
 ## Methods
-To determine the effects of increasing sample size, the trends associated with the long-term moniroting sites establised in 1990 will be compared to the trends associated with larger sample sizes.  A simple first cut analysis is to compare the trends associated with the sites established in 1990 (hereafter termed 'refernce series') against the trends of all of the moniroing sites (n=25)(Figure 1) for all elevations above 8k.
+To determine the effects of increasing sample size, the trends associated with the long-term monitoring sites established in 1990 will be compared to the trends associated with larger sample sizes.  A simple first cut analysis is to compare the trends associated with the sites established in 1990 (hereafter termed 'reference series') against the trends of all of the monitoring sites (n=25)(Figure 1) for all elevations above 8k.
 ### Figure 1
 ![fig1][fig1]
 
@@ -37,11 +38,11 @@ Where:
 - n = Site
 - x = Trip Date
 
-This approach to calculating normailzed volumes and normlized errors relies on several assumptions.  First, this approach relies on the fact that normalized metrics allow for the direct comparison of sites with different storage capacites and aerial extents.  Since the volumes measured at a paritlcar instance of time are realitve to the maximum volume ever surveyed over the either monitoing period, realtive chagnes in sandbar volumes at individual sites are preserved durig aggregration.  Second, reporting normalized errors as a function of area measured and the areas aassociated with the maximum surface at each site allows for uncertainites assocated with volume measurements to be preserved when mutiple sites are aggregrated.  These assumptions allow for normalized volumes and normalized errors to have similar units and occupy the same domain (e.g. [0-1]).  A major advantage of this approach is it reults in reporting raw data and each can be physically explained in terms of measured volumes and areas.
+This approach to calculating normalized volumes and normalized errors relies on several assumptions.  First, this approach relies on the fact that normalized metrics allow for the direct comparison of sites with different storage capacities and aerial extents.  Since the volumes measured at a particular instance of time are relative to the maximum volume ever surveyed over the either monitoring period, relative changes in sandbar volumes at individual sites are preserved during aggregation.  Second, reporting normalized errors as a function of the area measured and the areas associated with the maximum surface at each site allows for uncertainties associated with volume measurements to be preserved when multiple sites are aggregated.  These assumptions allow for normalized volumes and normalized errors to have similar units and occupy the same domain (e.g. [0-1]).  A major advantage of this approach is it results in reporting raw data and each can be physically explained in terms of measured volumes and areas.
 
-An alternative approach to aggregrating monitorig sites for time sereis analysis is to rely summary statistics (e.g. averages, medians, etc.). For each trip, this process would involve calculting the noramized volume at individual sites and reporting an summary statistic of the set of normlized volumes.  Summary statistics result in a metric that begins to loose its physical meaning (in temrs of measured volume and areas) and limit the ways uncertainites can be reported.  Any error bar attached to a summary statitic would have to rely on higher order statistics (e.g. standard deviation, standard error) and would have less of a physical explination than the summary statistic it attempts to describe.  Standard deviation describes how normalized volumes for a particular samople (i.e. survey trip) vary about the mean value of that sample, while standard error further complicates the explination by normilizing standard deviation by the sample size.
+An alternative approach to aggregating monitoring sites for time series analysis is to rely on summary statistics (e.g. averages, medians, etc.). For each trip, this process would involve calculating the normalized volume at individual sites and reporting an summary statistic of the set of normalized volumes.  Summary statistics result in a metric that begins to loose its physical meaning (in terms of measured volume and areas) and limit the ways uncertainties can be reported.  Any error bar attached to a summary statistic would have to rely on higher order statistics (e.g. standard deviation, standard error) and would have less of a physical explanation than the summary statistic it attempts to describe.  Standard deviation describes how normalized volumes for a particular sample (i.e. survey trip) vary about the mean value of that sample, while standard error further complicates the explanation by normalizing standard deviation by the sample size.
 
-The effects of varying sample sizes were analyzed by comparing the trends assoicated with the referene sereis to a subset of all of the monitorin sites in Marble Canyon. The subset of sites (hereafter temred 'subset sereis') was aquired by removing one of the sites added after 2002 and comparing to the trends associated with the reference series.  Table 2 summarzes the percent change assocaited between the normalized volume calcultions betwen the subset series and reference series.
+The effects of varying sample sizes were analyzed by comparing the trends associated with the reference series to a subset of all of the monitoring sites in Marble Canyon. The subset of sites (hereafter termed 'subset series') was acquired by removing one of the sites added after 2002 and comparing to the trends associated with the reference series.  Table 2 summarizes the percent change associated between the normalized volume calculations between the subset series and reference series.
 
 #### Table 2
 Site | Percent Change
