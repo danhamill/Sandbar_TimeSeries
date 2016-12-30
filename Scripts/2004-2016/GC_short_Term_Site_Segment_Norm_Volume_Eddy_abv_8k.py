@@ -92,7 +92,8 @@ with PdfPages(r'C:\workspace\Time_Series\Output\2004-2015\GC_short_Term_Norm_Vol
     #table2.plot(y = 'NormVol', yerr = 'std_error', ax = ax, label = 'Central Grand Canyon')
     table3.plot(y = 'NormVol', yerr = 'std_error', ax = ax, label = 'Western Grand Canyon')
     ax.set_ylabel('Normalized Volume [m$^3$/m$^3$] \n Normalized to Maximum Volume')
-    ax.set_title('Short Term Monitoring Sites: Eddy above 8k')   
+    ax.set_title('Short Term Monitoring Sites: Eddy above 8k')
+    ax.set_ylim(0,1.1)
     pdf.savefig()
     plt.close()
 del pdf

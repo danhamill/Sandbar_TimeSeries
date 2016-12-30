@@ -10,17 +10,25 @@ import pandas as pd
 import platform
 import numpy as np
 import matplotlib.pyplot as plt
+import pytablewriter
 
-
+def markdown_df(df):
+    writer = pytablewriter.MarkdownTableWriter()
+    writer.table_name = "example_table"
+    writer.header_list = list(df.columns.values)
+    writer.value_matrix = df.values.tolist()
+    writer.write_table()
+    
+    
 def query_df(df):
     '''
     Functon to subset data dataframe to Marble Canyon Sediment Enricnment Period
     '''
     tmp = df
     mc_query = 'Segment == ["1_UMC","2_LMC"]'
-    tmp.query(mc_query,inplace=True)
-    tmp.query('Period == ["Sediment_Enrichment"]',inplace = True)
-    tmp.query('Time_Series ==["long"]')
+    tmp = tmp.query(mc_query)
+    tmp = tmp.query('Period == ["Sediment_Enrichment"]')
+    tmp = tmp.query('Time_Series !=["na"]')
     tmp['TripDate'] = pd.to_datetime(tmp['TripDate'], format='%Y-%m-%d')
     return tmp
 
@@ -35,7 +43,10 @@ def pivot_df(df):
 
 
 def change_finder(extra_sites,long_term, all_sites):
-    
+    '''
+    Function to calculate % difference between long term site time series 
+    and bootstrapped all sties time series
+    '''
     for n in xrange(len(extra_sites)):
         
         #subset all sites to drop one value
@@ -45,27 +56,31 @@ def change_finder(extra_sites,long_term, all_sites):
         #Find normal Volumes 
         long_t = pivot_df(long_term)
         all_s = pivot_df(sites2test)
-    
+        date_influence = (all_s['Norm_Vol'] - long_t['Norm_Vol'])/(all_s['Norm_Vol'])
+        date_influence = date_influence.rename('Pct_Change')
         long_t= pd.pivot_table(long_t.reset_index(), index=['TripDate'], values=['Norm_Vol'])
         all_s = pd.pivot_table(all_s.reset_index(), index=['TripDate'], values=['Norm_Vol'])
         
         if n == 0:
             in_df=None
-            df_back = merge_df(long_t,all_s,drop_site,in_df)
+            in_df2 = None
+            df_back, df2_back = merge_df(long_t,all_s,drop_site,in_df,date_influence,in_df2)
         else:
-            df_back = merge_df(long_t,all_s,drop_site,df_back)
+            df_back, df2_back = merge_df(long_t,all_s,drop_site,df_back,date_influence,df2_back)
         
-    return df_back
+    return df_back, df2_back
         
-def merge_df(long_t,all_s, drop_site,in_df):
+def merge_df(long_t,all_s, drop_site,in_df,date_influence,in_df2):
     if in_df is None:
         vol_diff = (-long_t['Norm_Vol'].sum(axis=0)+all_s['Norm_Vol'].sum(axis=0))/(all_s['Norm_Vol'].sum(axis=0))
         out_df = pd.DataFrame(data=[vol_diff], columns=['Vol_Change'],index=[drop_site])
-        return out_df
+        date_influence_out = pd.DataFrame({'Pct_Change':date_influence, 'Site':drop_site})
+        return out_df, date_influence_out
     elif in_df is not None:
         vol_diff = (-long_t['Norm_Vol'].sum(axis=0)+all_s['Norm_Vol'].sum(axis=0))/(all_s['Norm_Vol'].sum(axis=0))
         out_df = pd.concat([in_df,pd.DataFrame(data=[vol_diff], columns=['Vol_Change'],index=[drop_site])])
-        return out_df
+        date_influence_out = pd.concat([in_df2,pd.DataFrame({'Pct_Change':date_influence, 'Site':drop_site})])
+        return out_df, date_influence_out
 
 if __name__ == '__main__':
     if platform.system() == 'Darwin':
@@ -100,17 +115,21 @@ if __name__ == '__main__':
     extra_sites = all_site_df[~all_site_df.isin(set(lt_site_df['Site']))].dropna()
     
     #find influence of extra sites
-    influence_df = change_finder(extra_sites,long_term,all_sites)
+    influence_df, date_influence = change_finder(extra_sites,long_term,all_sites)
     
+    #reformat date influence to be pivoted on site and display data columnwise
+    date_influence = pd.pivot_table(date_influence.reset_index(), index=['TripDate'],values=['Pct_Change'],columns=['Site'])
+    date_influence.columns = date_influence.columns.droplevel()
+    markdown_df(date_influence)
     #Data to plot                 
-    long_term = pivot_df(long_term)
-    all_sites = pivot_df(all_sites)
+    long_term_plt = pivot_df(long_term)
+    all_sites_plt = pivot_df(all_sites)
     
     fig,ax = plt.subplots()
-    long_term.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=12',color='blue',marker='o')
-    all_sites.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=30',color='green',linestyle='--',marker='x')
+    long_term_plt.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=12',color='blue',marker='o')
+    all_sites_plt.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=25',color='green',linestyle='--',marker='x')
     plt.tight_layout()
-    #plt.savefig(oName,dpi=600)
+    plt.savefig(oName,dpi=600)
     plt.show()
 
 

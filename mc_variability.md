@@ -28,10 +28,16 @@ To determine the effects of increasing sample size, the trends associated with t
 Only river tirps where where of the long term sites in marbel canyon were included in the time sereis presentented in Figure 1 were included in the time sereis analysis.  Normalized Volumes and errors were calculated using Equation 1 and Equation 2, respectively.
 
 ### Equation 1
-$\frac{\sum\limits_{n=1}^{n} {Volume_{n,x}}}{\sum\limits_{n=1}^{n}{Volume_{n,max}}}$
+
+![norm_vol.png](.\Output\mc_var\norm_vol.png)
 
 Where:
-- $$$n$$$ = Site
-- $$$x$$$ = Date
-- $$$Volume_{n,x}$$$ = Volume Surveyed at a particular site
-- $$$Volume_{n,max} = Maxiumum Volume at a particular site
+- n= Site
+- x = Date
+
+### Equation 2
+![norm_area.png](.\Output\mc_var\norm_area.png)
+
+
+
+

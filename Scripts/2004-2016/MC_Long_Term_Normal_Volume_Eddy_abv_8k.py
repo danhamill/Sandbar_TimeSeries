@@ -67,6 +67,7 @@ with PdfPages(r'C:\workspace\Time_Series\Output\2004-2015\MC_Long_Term_Norm_Vol_
     table2.plot(y = 'NormVol', yerr='std_error', ax = ax, label = 'Lower Marble Canyon')
     ax.set_ylabel('Normalized Volume [m$^3$/m$^3$] \n Normalized to Maximum Volume')
     ax.set_title('Long Term Monitoring Sites: Eddy Above 8k')   
+    ax.set_ylim(0,1.1)
     pdf.savefig()
     plt.close()
 del pdf
