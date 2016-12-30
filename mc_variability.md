@@ -36,8 +36,7 @@ Where:
 - x = Date
 
 ### Equation 2
-![norm_area][eq2](.\Output\mc_var\norm_area.png)
-
+![norm_area][eq2]
 
 
 
