@@ -40,6 +40,6 @@ Where:
 
 
 
-[fig1]: Output/mc_variability.pngT
+[fig1]: Time_Series/Output/mc_variability.png
 [eq1]: Time_Series/Output/mc_var/norm_vol.png
 [eq2]: Time_Series/Output/mc_var/norm_area.png
