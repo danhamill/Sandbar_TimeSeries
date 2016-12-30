@@ -22,22 +22,25 @@ Since 1990 NAU and USGS have been monitoring sandbars in Marble to determine how
 ## Methods
 To determine the effects of increasing sample size, the trends associated with the long-term moniroting sites establised in 1990 will be compared to the trends associated with larger sample sizes.  A simple first cut analysis is to compare the trends associated with the sites established in 1990 against the trends of all of the moniroing sites(Figure 1).
 ### Figure 1
-![mc_variability.png](.\Output\mc_variability.png)
+![mc_variability][fig1]
 
 
 Only river tirps where where of the long term sites in marbel canyon were included in the time sereis presentented in Figure 1 were included in the time sereis analysis.  Normalized Volumes and errors were calculated using Equation 1 and Equation 2, respectively.
 
 ### Equation 1
 
-![norm_vol.png](.\Output\mc_var\norm_vol.png)
+![norm_vol][eq1]
 
 Where:
 - n= Site
 - x = Date
 
 ### Equation 2
-![norm_area.png](.\Output\mc_var\norm_area.png)
+![norm_area][eq2](.\Output\mc_var\norm_area.png)
 
 
 
 
+[fig1]: Output\mc_variability.png
+[eq1]: Output\mc_var\norm_vol.png
+[eq2]: Output\mc_var\norm_area.png
