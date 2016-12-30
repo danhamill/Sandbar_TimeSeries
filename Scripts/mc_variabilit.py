@@ -128,6 +128,8 @@ if __name__ == '__main__':
     fig,ax = plt.subplots()
     long_term_plt.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=12',color='blue',marker='o')
     all_sites_plt.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=25',color='green',linestyle='--',marker='x')
+    ax.set_ylabel('Normalized Sandbar Volume [m$^3$/m$^3$]')
+    ax.set_xlabel('Date')
     plt.tight_layout()
     plt.savefig(oName,dpi=600)
     plt.show()
