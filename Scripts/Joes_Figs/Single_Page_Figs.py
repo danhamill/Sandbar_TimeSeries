@@ -246,7 +246,7 @@ plt.savefig(out_root + os.sep + "sediment_enrichment_volume_above_8k.png",dpi=60
 
 
 #################################################################################################################################
-#                    Volume eddy above 8k               
+#                    Volume eddy above 25k               
 ##################################################################################################################################    
 lt_sites = time_root + os.sep + 'sites.xlsx'
 lu_sites = pd.read_excel(lt_sites)
@@ -309,15 +309,15 @@ mc_early_total.plot(y = 'Volume', yerr='Errors', ax = ax, label = label_mc, line
 ax.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
 ax.set_ylabel('TOTAL SANDBAR VOLUME, \n IN CUBIC METERS')
 ax.set_xlabel('DATE')
-
+ax.set_ylim(0,25000)
 
 
 gc_early_average.plot(y = 'Volume', yerr='std_error', ax = ax1, label = label_gc,linestyle='-',color='blue',marker='o' )
-mc_early_average.plot(y = 'Volume', yerr='std_error',ax = ax1, lalabel = label_mc,linestyle='--',color='green',marker='x')
+mc_early_average.plot(y = 'Volume', yerr='std_error',ax = ax1, label = label_mc,linestyle='--',color='green',marker='x')
 ax.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
 ax1.set_ylabel('AVERAGE SANDBAR VOLUME, \n IN CUBIC METERS')
 ax1.set_xlabel('DATE')
-
+ax1.set_ylim(0,2000)
 
 
 gc_early_plot_mean.plot(y = 'NormVol', yerr='std_error', ax = ax2, label = label_gc,linestyle='-',color='blue',marker='o' )
@@ -325,6 +325,7 @@ mc_early_plot_mean.plot(y = 'NormVol', yerr='std_error',ax = ax2, label = label_
 ax.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
 ax2.set_ylabel('NORMALIZED SANDBAR VOLUME')
 ax2.set_xlabel('DATE')
+ax2.set_ylim(0.1,0.9)
 plt.tight_layout()
 plt.savefig(out_root + os.sep + "sediment_deficit_volume_above_25k.png",dpi=600)
 
@@ -337,7 +338,7 @@ fig, (ax,ax1,ax2) = plt.subplots(nrows=3,figsize=(7.5,10))
 gc_late_total.plot(y = 'Volume', yerr='Errors', ax = ax, label = label_gc,linestyle='-',color='blue',marker='o' )
 mc_late_total.plot(y = 'Volume', yerr='Errors',ax = ax, label = label_mc,linestyle='--',color='green',marker='x')
 ax.set_xlim(pd.Timestamp('2004-01-01'), pd.Timestamp('2017-01-01'))
-ax.set_ylim(30000,120000)
+ax.set_ylim(12000,35000)
 ax.set_ylabel('TOTAL SANDBAR VOLUME, \n IN CUBIC METERS')
 ax.set_xlabel('DATE')
 
@@ -346,7 +347,7 @@ mc_late_average.plot(y = 'Volume', yerr='std_error', ax = ax1, label = label_mc,
 ax.set_xlim(pd.Timestamp('2004-01-01'), pd.Timestamp('2017-01-01'))
 ax1.set_ylabel('AVERAGE SANDBAR VOLUME, \n IN CUBIC METERS')
 ax1.set_xlabel('DATE')
-ax1.set_ylim(0,3000)
+ax1.set_ylim(4,2500)
 
 
 
@@ -355,10 +356,125 @@ mc_late_plot_mean.plot(y = 'NormVol', yerr='std_error',ax = ax2, label = label_m
 ax.set_xlim(pd.Timestamp('2004-01-01'), pd.Timestamp('2017-01-01'))
 ax2.set_ylabel('NORMALIZED SANDBAR VOLUME')
 ax2.set_xlabel('DATE')
-ax2.set_ylim(0.25,0.85)
+ax2.set_ylim(0.25,1)
 plt.tight_layout()
 plt.savefig(out_root + os.sep + "sediment_enrichment_volume_above_25k.png",dpi=600)
 
+
+#################################################################################################################################
+#                    Volume eddy 8k to 25k    
+##################################################################################################################################    
+lt_sites = time_root + os.sep + 'sites.xlsx'
+lu_sites = pd.read_excel(lt_sites)
+lu_sites = lu_sites[['Sediment Deficit Sites']].dropna()    
+
+#Read Data from file
+data_file = sandbar_root + os.sep + 'Merged_Sandbar_data.csv'
+data = pd.read_csv(data_file, sep =',')
+
+query_90 = (data.Time_Series == 'long')& (data.Site !='m006r')& (data.Site !='033l')& (data.Site !='068r')
+
+#Set Trip dates to pandas datetime
+data['TripDate'] = pd.to_datetime(data['TripDate'], format='%Y-%m-%d')
+
+mc_query = 'Segment == ["1_UMC","2_LMC"]'
+gc_query = 'Segment != ["1_UMC","2_LMC"]'
+
+subset = data[(data.Time_Series == 'long') & (data.Site !='m006r')& (data.Site !='033l') & (data.Site !='062r') & (data.Site !='068r') & (data.Site !='167l') & (data.SitePart == 'Eddy') & (data.Plane_Height == 'eddy8kto25k')]   
+subset = subset[subset['Site'].str.len() == 4]
+                
+early = subset[subset['Period'] == 'Sediment_Deficit']
+mc_early = early.query(mc_query)
+gc_early = early.query(gc_query)
+mc_early = mc_early[mc_early['Site'].isin(set(lu_sites['Sediment Deficit Sites']))]
+gc_early = gc_early[gc_early['Site'].isin(set(lu_sites['Sediment Deficit Sites']))]
+
+subset1 = data[(data.Time_Series == 'long') & (data.Site !='m006r')& (data.Site !='033l') & (data.Site !='062r') & (data.Site !='068r') & (data.Site !='167l') & (data.SitePart == 'Eddy') & (data.Plane_Height == 'eddy8kto25k')]   
+subset1 = subset1[subset1['Site'].str.len() == 4]
+
+late = subset1[subset1['Period'] == 'Sediment_Enrichment']
+mc_late = late.query(mc_query)
+gc_late = late.query(gc_query)
+
+
+gc_early_plot_mean = return_plot_series_mean(gc_early)
+mc_early_plot_mean = return_plot_series_mean(mc_early)
+
+mc_late_plot_mean = return_plot_series_mean(mc_late)
+gc_late_plot_mean = return_plot_series_mean(gc_late)
+
+mc_early_average = get_std_error(mc_early)
+gc_early_average = get_std_error(gc_early)
+
+mc_late_average = get_std_error(mc_late)
+gc_late_average = get_std_error(gc_late)
+
+mc_early_total = pd.pivot_table(mc_early, index=['TripDate'], values=['Volume','Errors'],aggfunc=np.sum)
+gc_early_total = pd.pivot_table(gc_early, index=['TripDate'], values=['Volume','Errors'],aggfunc=np.sum)
+
+mc_late_total = pd.pivot_table(mc_late, index=['TripDate'], values=['Volume','Errors'],aggfunc=np.sum)
+gc_late_total = pd.pivot_table(gc_late, index=['TripDate'], values=['Volume','Errors'],aggfunc=np.sum)
+
+
+#Sediment Deficit
+label_gc = 'Grand Canyon: N=' + str(len(gc_early['Site'].unique()))
+label_mc ='Marble Canyon: N=' + str(len(mc_early['Site'].unique()))
+fig, (ax,ax1,ax2) = plt.subplots(nrows=3,figsize=(7.5,10))
+gc_early_total.plot(y = 'Volume', yerr='Errors', ax = ax, label = label_gc, linestyle='-',color='blue',marker='o' )
+mc_early_total.plot(y = 'Volume', yerr='Errors', ax = ax, label = label_mc, linestyle='--',color='green',marker='x')
+ax.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
+ax.set_ylabel('TOTAL SANDBAR VOLUME, \n IN CUBIC METERS')
+ax.set_xlabel('DATE')
+ax.set_ylim(10000,50000)
+
+
+gc_early_average.plot(y = 'Volume', yerr='std_error', ax = ax1, label = label_gc,linestyle='-',color='blue',marker='o' )
+mc_early_average.plot(y = 'Volume', yerr='std_error',ax = ax1, label = label_mc,linestyle='--',color='green',marker='x')
+ax.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
+ax1.set_ylabel('AVERAGE SANDBAR VOLUME, \n IN CUBIC METERS')
+ax1.set_xlabel('DATE')
+ax1.set_ylim(0,6000)
+
+
+gc_early_plot_mean.plot(y = 'NormVol', yerr='std_error', ax = ax2, label = label_gc,linestyle='-',color='blue',marker='o' )
+mc_early_plot_mean.plot(y = 'NormVol', yerr='std_error',ax = ax2, label = label_mc,linestyle='--',color='green',marker='x')
+ax.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
+ax2.set_ylabel('NORMALIZED SANDBAR VOLUME')
+ax2.set_xlabel('DATE')
+ax2.set_ylim(0.1,0.9)
+plt.tight_layout()
+plt.savefig(out_root + os.sep + "sediment_deficit_volume_8kto25k.png",dpi=600)
+
+
+#Sediment Enrichment
+label_gc = 'Grand Canyon: N=' + str(len(gc_late['Site'].unique()))
+label_mc = 'Marble Canyon: N=' + str(len(mc_late['Site'].unique()))
+
+fig, (ax,ax1,ax2) = plt.subplots(nrows=3,figsize=(7.5,10))
+gc_late_total.plot(y = 'Volume', yerr='Errors', ax = ax, label = label_gc,linestyle='-',color='blue',marker='o' )
+mc_late_total.plot(y = 'Volume', yerr='Errors',ax = ax, label = label_mc,linestyle='--',color='green',marker='x')
+ax.set_xlim(pd.Timestamp('2004-01-01'), pd.Timestamp('2017-01-01'))
+ax.set_ylim(20000,100000)
+ax.set_ylabel('TOTAL SANDBAR VOLUME, \n IN CUBIC METERS')
+ax.set_xlabel('DATE')
+
+gc_late_average.plot(y = 'Volume', yerr='std_error', ax = ax1, label = label_gc, linestyle='-', color='blue', marker='o' )
+mc_late_average.plot(y = 'Volume', yerr='std_error', ax = ax1, label = label_mc,linestyle='--',color='green',marker='x')
+ax.set_xlim(pd.Timestamp('2004-01-01'), pd.Timestamp('2017-01-01'))
+ax1.set_ylabel('AVERAGE SANDBAR VOLUME, \n IN CUBIC METERS')
+ax1.set_xlabel('DATE')
+ax1.set_ylim(1,6000)
+
+
+
+gc_late_plot_mean.plot(y = 'NormVol', yerr='std_error', ax = ax2, label = label_gc,linestyle='-',color='blue',marker='o' )
+mc_late_plot_mean.plot(y = 'NormVol', yerr='std_error',ax = ax2, label = label_mc,linestyle='--',color='green',marker='x')
+ax.set_xlim(pd.Timestamp('2004-01-01'), pd.Timestamp('2017-01-01'))
+ax2.set_ylabel('NORMALIZED SANDBAR VOLUME')
+ax2.set_xlabel('DATE')
+ax2.set_ylim(0.1,0.9)
+plt.tight_layout()
+plt.savefig(out_root + os.sep + "sediment_enrichment_volume_8kto25k.png",dpi=600)
 
 
 #################################################################################################################################
