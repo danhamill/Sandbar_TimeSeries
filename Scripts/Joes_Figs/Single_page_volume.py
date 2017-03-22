@@ -125,7 +125,7 @@ if platform.system() == 'Darwin':
 elif platform.system() == 'Windows':
     sandbar_root = r'C:\workspace\sandbar_process'
     time_root = r'C:\workspace\Time_Series'
-    out_root = time_root + os.sep + 'Joes_figs'
+    out_root = time_root + os.sep + r'Output\Joes_figs'
 
 
 
@@ -195,20 +195,23 @@ mc_early_total.plot(y = 'Volume', yerr='Errors', ax = ax, label = label_mc, line
 ax.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
 ax.set_ylabel('TOTAL SANDBAR VOLUME, \n IN CUBIC METERS')
 ax.set_xlabel('DATE')
+ax.set_ylim(15000,70000)
 
 
 
 gc_early_average.plot(y = 'Volume', yerr='std_error', ax = ax1, label = label_gc,linestyle='-',color='blue',marker='o' )
-mc_early_average.plot(y = 'Volume', yerr='std_error',ax = ax1, lalabel = label_mc,linestyle='--',color='green',marker='x')
+mc_early_average.plot(y = 'Volume', yerr='std_error',ax = ax1, label = label_mc,linestyle='--',color='green',marker='x')
 ax.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
 ax1.set_ylabel('AVERAGE SANDBAR VOLUME, \n IN CUBIC METERS')
 ax1.set_xlabel('DATE')
+ax1.set_ylim(0,4000)
 
 gc_early_plot_mean.plot(y = 'NormVol', yerr='std_error', ax = ax2, label = label_gc,linestyle='-',color='blue',marker='o' )
 mc_early_plot_mean.plot(y = 'NormVol', yerr='std_error',ax = ax2, label = label_mc,linestyle='--',color='green',marker='x')
 ax.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
 ax2.set_ylabel('NORMALIZED SANDBAR VOLUME')
 ax2.set_xlabel('DATE')
+ax2.set_ylim(0.1,0.8)
 plt.tight_layout()
 plt.savefig(out_root + os.sep + "sediment_deficit_volume_above_8k.png",dpi=600)
 
