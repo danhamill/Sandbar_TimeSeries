@@ -121,7 +121,7 @@ vol_change = vol_change.sort_values(by='sort_col')
 circ1 = Line2D([0], [0], linestyle="none", marker="s", markersize=6, markerfacecolor='red')
 circ2 = Line2D([0], [0], linestyle="none", marker="s", markersize=6, markerfacecolor='blue')
 
-fig = plt.figure(figsize=(10,6))
+fig = plt.figure(figsize=(12,6))
 ax = fig.add_subplot(2,3,1)
 vol_change.groupby('long_trend').size().plot(ax=ax,kind='bar',rot=0,title='All Sites',ylim=(0,20))
 ax.set_xlabel('')
@@ -518,7 +518,7 @@ ax2.set_ylabel('Area $m^2$')
 ax1.set_xticks([-.23, 0]) 
 ax2.set_ylim(0,3000)
 ax1.set_ylim(0,3000)
-ax1.set_xticklabels([1990, 2003], rotation=0)
+ax1.set_xticklabels([2003, 2016], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
 #Get the data
@@ -538,7 +538,7 @@ ax2.set_ylabel('Area $m^2$')
 ax1.set_xticks([-.23, 0]) 
 ax2.set_ylim(0,3000)
 ax1.set_ylim(0,3000)
-ax1.set_xticklabels([1990, 2003], rotation=0)
+ax1.set_xticklabels([2003, 2016], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
 #Get the data
@@ -557,7 +557,7 @@ ax2.set_ylabel('Area $m^2$')
 ax1.set_xticks([-.23, 0]) 
 ax2.set_ylim(0,3000)
 ax1.set_ylim(0,3000)
-ax1.set_xticklabels([1990, 2003], rotation=0)
+ax1.set_xticklabels([2003, 2016], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
 #plt.suptitle('Eddy Fluctuating Zone',fontsize=14)
@@ -634,7 +634,7 @@ ax2.set_ylabel('Area $m^2$')
 ax1.set_xticks([-.23, 0]) 
 ax2.set_ylim(0,3000)
 ax1.set_ylim(0,3000)
-ax1.set_xticklabels([2004, 2016], rotation=0)
+ax1.set_xticklabels([2003, 2016], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
 #Get the data
@@ -654,7 +654,7 @@ ax2.set_ylabel('Area $m^2$')
 ax1.set_xticks([-.23, 0]) 
 ax2.set_ylim(0,3000)
 ax1.set_ylim(0,3000)
-ax1.set_xticklabels([2004, 2016], rotation=0)
+ax1.set_xticklabels([2003, 2016], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
 #Get the data
@@ -673,7 +673,7 @@ ax2.set_ylabel('Area $m^2$')
 ax1.set_xticks([-.23, 0]) 
 ax2.set_ylim(0,3000)
 ax1.set_ylim(0,3000)
-ax1.set_xticklabels([2004, 2016], rotation=0)
+ax1.set_xticklabels([2003, 2016], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
 #plt.suptitle('Eddy Fluctuating Zone',fontsize=14)
@@ -759,7 +759,7 @@ ax2.set_ylabel('Area $m^2$')
 ax1.set_xticks([-.23, 0]) 
 ax2.set_ylim(0,3000)
 ax1.set_ylim(0,3000)
-ax1.set_xticklabels([2004, 2016], rotation=0)
+ax1.set_xticklabels([2003, 2016], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
 #Get the data
@@ -779,7 +779,7 @@ ax2.set_ylabel('Area $m^2$')
 ax1.set_xticks([-.23, 0]) 
 ax2.set_ylim(0,3000)
 ax1.set_ylim(0,3000)
-ax1.set_xticklabels([2004, 2016], rotation=0)
+ax1.set_xticklabels([2003, 2016], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
 #Get the data
@@ -798,11 +798,16 @@ ax2.set_ylabel('Area $m^2$')
 ax1.set_xticks([-.23, 0]) 
 ax2.set_ylim(0,3000)
 ax1.set_ylim(0,3000)
-ax1.set_xticklabels([2004, 2016], rotation=0)
+ax1.set_xticklabels([2003, 2016], rotation=0)
 ax1.legend((circ1, circ2),('Volume','Area'),numpoints=1, loc='9', ncol=2, columnspacing=1, fontsize=8)
 
 #plt.suptitle('Eddy Fluctuating Zone',fontsize=14)
 plt.tight_layout(pad=2.2)
 plt.savefig(r"C:\workspace\Time_Series\output\Long_Term_Monitoring_Sites_Summary_sediment_enrichment_Eddyabk8k.png", dpi=600)
 #plt.show()
+
+
+fig,ax = plt.subplots()
+
+
  
