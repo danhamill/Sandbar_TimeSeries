@@ -215,6 +215,8 @@ ax1.set_xlabel('DATE')
 ax1.set_ylim(0,6000)
 ax1.legend(loc=9,ncol=2,fontsize=10)
 
+
+fig,ax2 = plt.subplots(figsize=(7.5,3.33))
 mc_norm_vol.plot(y = 'Norm_Vol',ax = ax2, yerr = 'y_err',label = label_mc,linestyle='--',color='green',marker='x')
 gc_norm_vol.plot(y = 'Norm_Vol', ax = ax2, yerr = 'y_err',label = label_gc,linestyle='-',color='blue',marker='o' )
 
@@ -224,17 +226,19 @@ ax2.set_xlabel('DATE')
 ax2.set_ylim(0.1,0.8)
 ax2.legend(loc=9,ncol=2,fontsize=10)
 
-
-ax.set_autoscale_on(False)
-ax1.set_autoscale_on(False)
+#
+#ax.set_autoscale_on(False)
+#ax1.set_autoscale_on(False)
 ax2.set_autoscale_on(False)
 
 
-ax.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
-ax1.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
+#ax.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
+#ax1.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
 #ax2.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
 plt.tight_layout()
-plt.savefig(out_root + os.sep + "Time_Series_volume_above_8k.png",dpi=600)
+
+
+plt.savefig(out_root + os.sep + "Time_Series_Norm_vol_above_8k.png",dpi=600)
 
 
 writer = pd.ExcelWriter(out_root + os.sep + "Time_series_area_vol_data.xlsx",engine='xlsxwriter')
