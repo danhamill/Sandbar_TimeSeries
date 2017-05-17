@@ -27,11 +27,30 @@ def query_df(df):
     tmp = df
     mc_query = 'Segment == ["1_UMC","2_LMC"]'
     tmp = tmp.query(mc_query)
-    tmp = tmp.query('Period == ["Sediment_Enrichment"]')
-    tmp = tmp.query('Time_Series !=["na"]')
     tmp['TripDate'] = pd.to_datetime(tmp['TripDate'], format='%Y-%m-%d')
+    tmp = tmp[tmp['TripDate'] >= '2003-09-20']
+    tmp = tmp[(tmp['Time_Series']!= 'na') & (tmp['SitePart'] == 'Eddy')]
+    tmp = tmp[tmp['Plane_Height'] != 'eddyminto8k']
+    tmp = tmp[(tmp['Site'] != '009l') &(tmp['Site'] != '035l_r')&(tmp['Site'] != '035l_r') & (tmp['Site'] != '045l_s')]
     return tmp
 
+def vol_norm_data(df,section=None):
+    if section is not None:
+        df=df.query(section)
+    df = pd.pivot_table(df,index=['Site','SurveyDate','SitePart','TripDate','SiteRange','Segment','Bar_type','Time_Series','Period'],values=['Area_2D','Area_3D','Volume','Errors','MaxVol','Max_Area'],aggfunc=np.sum).reset_index()
+    df['Norm_Vol'] = df['Volume']/df['MaxVol']
+    tmp_pvt = pd.pivot_table(df, values=['Norm_Vol'], index=['TripDate'], aggfunc=np.std)
+    tmp_pvt = tmp_pvt.rename(columns={'Norm_Vol':'std_dev'})
+    tmp_count = pd.pivot_table(df,values=['Norm_Vol'], index=['TripDate'], aggfunc='count')
+    tmp_count = tmp_count.rename(columns={'Norm_Vol':'count'})
+    tmp_pvt['std_error'] = tmp_pvt['std_dev']/np.sqrt(tmp_count['count'])
+    yerr = tmp_pvt[['std_error']]
+    del tmp_count, tmp_pvt
+    tmp_pvt = pd.pivot_table(df, values=['Norm_Vol'], index=['TripDate'], aggfunc=np.average)
+    tmp_2 = pd.pivot_table(df, values=['Norm_Vol'], index=['TripDate'], aggfunc=[len,np.mean,np.std,np.min,np.max])
+    
+    tmp_pvt['y_err']=yerr
+    return tmp_pvt, tmp_2
     
 def pivot_df(df):
     lt_pvt = pd.pivot_table(df, values=['Volume','MaxVol','Area_2D','Max_Area'],index=['TripDate'],aggfunc=np.sum)
@@ -109,31 +128,52 @@ if __name__ == '__main__':
     all_sites = query_df(data)
     all_sites = all_sites.query('Bar_type != "Total"')
     
-    #Find extra sites
-    all_site_df = pd.DataFrame(data=all_sites.Site.unique(),columns=['Site'])
-    lt_site_df = pd.DataFrame(data=long_term.Site.unique(),columns=['Site'])
-    extra_sites = all_site_df[~all_site_df.isin(set(lt_site_df['Site']))].dropna()
+    all_sites = all
     
-    #find influence of extra sites
-    influence_df, date_influence = change_finder(extra_sites,long_term,all_sites)
-    
-    #reformat date influence to be pivoted on site and display data columnwise
-    date_influence = pd.pivot_table(date_influence.reset_index(), index=['TripDate'],values=['Pct_Change'],columns=['Site'])
-    date_influence.columns = date_influence.columns.droplevel()
-    markdown_df(date_influence)
+#    #Find extra sites
+#    all_site_df = pd.DataFrame(data=all_sites.Site.unique(),columns=['Site'])
+#    lt_site_df = pd.DataFrame(data=long_term.Site.unique(),columns=['Site'])
+#    extra_sites = all_site_df[~all_site_df.isin(set(lt_site_df['Site']))].dropna()
+#    
+#    #find influence of extra sites
+#    influence_df, date_influence = change_finder(extra_sites,long_term,all_sites)
+#    
+#    #reformat date influence to be pivoted on site and display data columnwise
+#    date_influence = pd.pivot_table(date_influence.reset_index(), index=['TripDate'],values=['Pct_Change'],columns=['Site'])
+#    date_influence.columns = date_influence.columns.droplevel()
+#    markdown_df(date_influence)
     #Data to plot                 
-    long_term_plt = pivot_df(long_term)
-    all_sites_plt = pivot_df(all_sites)
+    long_term_plt,long_term_tbl = vol_norm_data(long_term)
+    all_sites_plt,all_sites_tbl = vol_norm_data(all_sites)
     
-    fig,ax = plt.subplots()
-    long_term_plt.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=12',color='blue',marker='o')
-    all_sites_plt.plot(y = 'Norm_Vol', yerr='Norm_Error',ax = ax, label = 'Marble Canyon N=25',color='green',linestyle='--',marker='x')
-    ax.set_ylabel('Normalized Sandbar Volume [m$^3$/m$^3$]')
+    label_mc = 'Mable Canyon: N=' + str(len(long_term['Site'].unique()))
+    label_mc1 ='Marble Canyon: N=' + str(len(all_sites['Site'].unique()))
+    
+    fig,ax = plt.subplots(figsize=(7.5,3.33))
+    long_term_plt.plot(y = 'Norm_Vol', yerr='y_err',ax = ax, label = label_mc, color='blue',marker='o')
+    all_sites_plt.plot(y = 'Norm_Vol', yerr='y_err',ax = ax, label = label_mc1, color='green',linestyle='--',marker='x')
+    ax.set_ylabel('Normalized Sandbar Volume')
     ax.set_xlabel('Date')
+    ax.set_xlim(pd.Timestamp('2003-01-01'), pd.Timestamp('2017-01-01'))
+    ax.set_ylim(0.2,0.7)
+    ax.legend(loc=9, ncol=2,fontsize=10)
     plt.tight_layout()
     plt.savefig(oName,dpi=600)
     plt.show()
 
-
+    
+    df = pd.DataFrame(columns=['d','std'])
+    df.loc[:,'d'] = long_term_plt.Norm_Vol-all_sites_plt.Norm_Vol
+    
+    t = np.mean(df['d'])/(np.std(df['d'])/np.sqrt(14))
+    
+    from scipy.stats import ttest_ind, wilcoxon
+    
+    t, p = ttest_ind(long_term_plt.Norm_Vol,all_sites_plt.Norm_Vol)
+    t_w, p_w = wilcoxon(long_term_plt.Norm_Vol,all_sites_plt.Norm_Vol)
+    
+    fig, (ax,ax1) = plt.subplots(nrows=2)
+    
+    
 
 
