@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import platform
 import os
-
+from mpl_toolkits.mplot3d import Axes3D
 
     
 def area_norm_data(df,section=None):
@@ -46,6 +46,42 @@ def vol_norm_data(df,section=None):
     
     tmp_pvt['y_err']=yerr
     return tmp_pvt, tmp_2
+
+
+def area_norm_data_site(df,section=None):
+    if section is not None:
+        df=df.query(section)
+    df['Norm_Area'] = df['Area_2D']/df['Max_Area']
+    tmp_pvt = pd.pivot_table(df, values=['Norm_Area'], index=['TripDate','Site'], aggfunc=np.std)
+    tmp_pvt = tmp_pvt.rename(columns={'Norm_Area':'std_dev'})
+    tmp_count = pd.pivot_table(df,values=['Norm_Area'], index=['TripDate','Site'], aggfunc='count')
+    tmp_count = tmp_count.rename(columns={'Norm_Area':'count'})
+    tmp_pvt['std_error'] = tmp_pvt['std_dev']/np.sqrt(tmp_count['count'])
+    yerr = tmp_pvt[['std_error']]
+    del tmp_count, tmp_pvt
+    tmp_pvt = pd.pivot_table(df, values=['Norm_Area'], index=['TripDate','Site'], aggfunc=np.average)
+    tmp_2 = pd.pivot_table(df, values=['Norm_Area'], index=['TripDate','Site'],aggfunc=[len,np.mean,np.std,np.min,np.max])
+    tmp_pvt['y_err']=yerr
+    return tmp_pvt, tmp_2
+    
+    
+def vol_norm_data_site(df,section=None):
+    if section is not None:
+        df=df.query(section)
+    df['Norm_Vol'] = df['Volume']/df['MaxVol']
+    tmp_pvt = pd.pivot_table(df, values=['Norm_Vol'], index=['TripDate','Site'], aggfunc=np.std)
+    tmp_pvt = tmp_pvt.rename(columns={'Norm_Vol':'std_dev'})
+    tmp_count = pd.pivot_table(df,values=['Norm_Vol'], index=['TripDate','Site'], aggfunc='count')
+    tmp_count = tmp_count.rename(columns={'Norm_Vol':'count'})
+    tmp_pvt['std_error'] = tmp_pvt['std_dev']/np.sqrt(tmp_count['count'])
+    yerr = tmp_pvt[['std_error']]
+    del tmp_count, tmp_pvt
+    tmp_pvt = pd.pivot_table(df, values=['Norm_Vol'], index=['TripDate','Site'], aggfunc=np.average)
+    tmp_2 = pd.pivot_table(df, values=['Norm_Vol'], index=['TripDate','Site'], aggfunc=[len,np.mean,np.std,np.min,np.max])
+    
+    tmp_pvt['y_err']=yerr
+    return tmp_pvt, tmp_2
+
     
 if platform.system() == 'Darwin':
     sandbar_root = '/Users/danielhamill/git_clones/sandbar_process'
@@ -125,11 +161,53 @@ ax.set_xlim(0.1,0.7)
 ax.set_ylim(0.2,0.7)
 ax1.set_xlim(0.1,0.25)
 ax1.set_ylim(0.15,0.40)
-
+ax.set_title('Sediment Deficit, One data point per trip')
 ax.legend(loc=9,ncol=2,fontsize=8)
 ax1.legend(loc=9,ncol=2,fontsize=8)
 plt.tight_layout()
-plt.show()
+plt.savefig(r'C:\workspace\Time_Series\Output\bin_analysis\avg_norm_volume_per_trip.png',dpi=600)
+
+
+
+#===================================================================================================
+#=====================   all sites per trip
+#===================================================================================================
+
+
+fz_mc_norm_area, fz_mc_norm_area_tbl_deficit = area_norm_data_site(fz_mc)
+fz_gc_norm_area, fz_gc_norm_area_tbl_deficit = area_norm_data_site(fz_gc)
+
+fz_mc_norm_vol, fz_mc_norm_vol_tbl_deficit = vol_norm_data_site(fz_mc)
+fz_gc_norm_vol, fz_gc_norm_vol_tbl_deficit = vol_norm_data_site(fz_gc)
+
+
+he_mc_norm_area, he_mc_norm_area_tbl_deficit = area_norm_data_site(he_mc)
+he_gc_norm_area, he_gc_norm_area_tbl_deficit = area_norm_data_site(he_gc)
+
+he_mc_norm_vol, he_mc_norm_vol_tbl_deficit = vol_norm_data_site(he_mc)
+he_gc_norm_vol, he_gc_norm_vol_tbl_deficit = vol_norm_data_site(he_gc)
+
+
+fig,(ax,ax1) = plt.subplots(nrows=2)
+ax.scatter(x=he_mc_norm_vol['Norm_Vol'], y=fz_mc_norm_vol['Norm_Vol'], marker='x',label='Marble Canyon')
+ax.scatter(x=he_gc_norm_vol['Norm_Vol'], y=fz_gc_norm_vol['Norm_Vol'], marker='>',label='Grand Canyon')
+ax.set_xlabel('High Elevation \n Normalized Volume')
+ax.set_ylabel('Fluctuating Zone \n Normalized Volume')
+
+ax1.scatter(x=he_mc_norm_area['Norm_Area'], y=fz_mc_norm_area['Norm_Area'], marker='x',label='Marble Canyon')
+ax1.scatter(x=he_gc_norm_area['Norm_Area'], y=fz_gc_norm_area['Norm_Area'], marker='>',label='Grand Canyon')
+ax1.set_xlabel('High Elevation \n Normalized Area')
+ax1.set_ylabel('Fluctuating Zone \n Normalized Area')
+
+#ax.set_xlim(0.1,0.7)
+#ax.set_ylim(0.2,0.7)
+#ax1.set_xlim(0.1,0.25)
+#ax1.set_ylim(0.15,0.40)
+ax.set_title('Sediment Deficit, All sites per trip')
+ax.legend(loc=9,ncol=2,fontsize=8)
+ax1.legend(loc=9,ncol=2,fontsize=8)
+plt.tight_layout()
+
 
 
 
