@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as tkr
 from scipy.stats import probplot
 from matplotlib.font_manager import FontProperties
+from matplotlib.ticker import FormatStrFormatter
 
 
 files = glob(r"C:\workspace\survey_stage\shp\*.shp")
@@ -27,7 +28,7 @@ ind_lt = [6,7,14,17,24,27,41,46,54,63,64,67]
 lt_bt = ['r','s','s','r','r','u','r','s','r','r','s','r']
 area_old = []
 
-for ind in ind_new[4:5]:
+for ind in ind_new:
     shp = files[ind]
     ds = ogr.Open(shp)
     layer = ds.GetLayer()
@@ -125,8 +126,10 @@ plt.setp(legend.get_title(),fontsize='x-small')
 plt.setp(legend2.get_title(),fontsize='x-small')
 ax.set_xlabel('QUANTILES')
 ax1.set_xlabel('QUANTILES')
+ax.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+ax1.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 plt.tight_layout()
-plt.savefig(r"C:\workspace\Time_Series\Output\Joes_Figs\mc_area_qqplot.png",dpi=600)
+plt.savefig(r"C:\workspace\Time_Series\Output\Joes_Figs\mc_area_probability_plot.png",dpi=600)
 
 
 
