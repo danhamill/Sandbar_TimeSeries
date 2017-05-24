@@ -10,6 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import platform
 import os
+from matplotlib.ticker import FormatStrFormatter
+
 
 def area_norm_data(df,section=None):
     if section is not None:
@@ -142,8 +144,8 @@ fig,((ax,ax1),(ax2,ax3)) = plt.subplots(figsize=(7.5,6.66), ncols=2,nrows=2)
 he_mc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax, label = 'Marble Canyon: High Elevation', color='blue',marker='o',sharex=ax2)
 fz_mc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax, label = 'Marble Canyon: Fluctuating Zone', color='green',linestyle='--',marker='x',sharex=ax2)
 
-he_gc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax1, label = 'Grand Canyon: High Elevation Zone', color='red',linestyle='-.',marker='^',sharex=ax3,sharey=ax)
-fz_gc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax1, label = 'Grand Canyon: Fluctuating Zone', color='black',linestyle=':',marker='>',sharex=ax3,sharey=ax)
+he_gc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax1, label = 'Grand Canyon: High Elevation Zone', color='blue',marker='o',sharex=ax3,sharey=ax)
+fz_gc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax1, label = 'Grand Canyon: Fluctuating Zone', color='green',linestyle='--',marker='x',sharex=ax3,sharey=ax)
 ax.legend(loc=9,fontsize=8)#nrow=2,
 
 
@@ -151,8 +153,8 @@ ax.legend(loc=9,fontsize=8)#nrow=2,
 he_mc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax2, label = 'Marble Canyon: High Elevation', color='blue',marker='o')
 fz_mc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax2, label = 'Marble Canyon: Fluctuating Zone', color='green',linestyle='--',marker='x')
 
-he_gc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax3, label = 'Grand Canyon: High Elevation Zone', color='red',linestyle='-.',marker='^',sharey=ax2)
-fz_gc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax3, label = 'Grand Canyon: Fluctuating Zone', color='black',linestyle=':',marker='>',sharey=ax2)
+he_gc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax3, label = 'Grand Canyon: High Elevation Zone', color='blue',marker='o',sharey=ax2)
+fz_gc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax3, label = 'Grand Canyon: Fluctuating Zone', color='green',linestyle='--',marker='x',sharey=ax2)
 
 ax.set_ylim(0,0.5)    
 ax1.set_ylim(0,0.5)
@@ -169,6 +171,8 @@ ax3.legend(loc=1,fontsize=8)
 
 ax2.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
 ax3.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
+ax2.set_xlabel('Date')
+ax3.set_xlabel('Date')
 plt.tight_layout()
 plt.savefig(out_root + os.sep + 'sediment_deficit_bin_time_series.png', dpi=600)
 
@@ -215,8 +219,8 @@ fig,((ax,ax1),(ax2,ax3)) = plt.subplots(figsize=(7.5,6.66), ncols=2,nrows=2)
 he_mc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax, label = 'Marble Canyon: High Elevation', color='blue',marker='o',sharex=ax2)
 fz_mc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax, label = 'Marble Canyon: Fluctuating Zone', color='green',linestyle='--',marker='x',sharex=ax2)
 
-he_gc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax1, label = 'Grand Canyon: High Elevation Zone', color='red',linestyle='-.',marker='^',sharex=ax3,sharey=ax)
-fz_gc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax1, label = 'Grand Canyon: Fluctuating Zone', color='black',linestyle=':',marker='>',sharex=ax3,sharey=ax)
+he_gc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax1, label = 'Grand Canyon: High Elevation Zone', color='blue',marker='o',sharex=ax3,sharey=ax)
+fz_gc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax1, label = 'Grand Canyon: Fluctuating Zone', color='green',linestyle='--',marker='x',sharex=ax3,sharey=ax)
 ax.legend(loc=9,fontsize=8)#nrow=2,
 
 
@@ -224,8 +228,8 @@ ax.legend(loc=9,fontsize=8)#nrow=2,
 he_mc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax2, label = 'Marble Canyon: High Elevation', color='blue',marker='o')
 fz_mc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax2, label = 'Marble Canyon: Fluctuating Zone', color='green',linestyle='--',marker='x')
 
-he_gc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax3, label = 'Grand Canyon: High Elevation Zone', color='red',linestyle='-.',marker='^',sharey=ax2)
-fz_gc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax3, label = 'Grand Canyon: Fluctuating Zone', color='black',linestyle=':',marker='>',sharey=ax2)
+he_gc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax3, label = 'Grand Canyon: High Elevation Zone', color='blue',marker='o',sharey=ax2)
+fz_gc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax3, label = 'Grand Canyon: Fluctuating Zone', color='green',linestyle='--',marker='x',sharey=ax2)
 
 ax.set_ylim(0.1,0.4)    
 ax1.set_ylim(0.0,0.4)
@@ -240,7 +244,12 @@ ax2.legend(loc=9,fontsize=8)
 ax3.legend(loc=1,fontsize=8)
 
 
-ax2.set_xlim(pd.Timestamp('2003-01-01'), pd.Timestamp('2018-01-01'))
-ax3.set_xlim(pd.Timestamp('2003-01-01'), pd.Timestamp('2018-01-01'))
+ax2.set_xlim(pd.Timestamp('2003-01-01'), pd.Timestamp('2017-01-01'))
+ax3.set_xlim(pd.Timestamp('2003-01-01'), pd.Timestamp('2017-01-01'))
+ax2.set_xlabel('Date')
+ax3.set_xlabel('Date')
+ax2.set_autoscale_on(False)
+ax3.set_autoscale_on(False)
+ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 plt.tight_layout()
 plt.savefig(out_root + os.sep + 'sediment_enrichment_bin_time_series.png', dpi=600)
