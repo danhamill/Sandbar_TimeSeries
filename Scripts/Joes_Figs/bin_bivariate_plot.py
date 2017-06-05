@@ -82,7 +82,20 @@ def vol_norm_data_site(df,section=None):
     tmp_pvt['y_err']=yerr
     return tmp_pvt, tmp_2
 
+def find_zero_dates(df):
+    tmp = df
+    tmp = tmp[tmp['Plane_Height']=='eddyabove25k']
+    tmp = tmp[tmp['Area_2D']==0]
+    dates2drop = tmp[['Site','SurveyDate']].drop_duplicates()
     
+    for i, thing in dates2drop.iterrows():
+        df = df[(df['Site'] != thing['Site']) | (df['SurveyDate'] != thing['SurveyDate'])]
+    return df
+    
+    
+    
+
+
 if platform.system() == 'Darwin':
     sandbar_root = '/Users/danielhamill/git_clones/sandbar_process'
     time_root = '/Users/danielhamill/git_clones/Time_Series'
@@ -111,7 +124,7 @@ data['TripDate'] = pd.to_datetime(data['TripDate'], format='%Y-%m-%d')
 ###############################################################################################################
 
 subset = data[(data.Time_Series == 'long') & (data.Site !='m006r')& (data.Site !='035l_r') & (data.Site !='062r') & (data.Site !='068r') & (data.Site !='167l')  & (data.Site !='202r_r')& (data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.Bar_type != 'Total')]   
-
+subset = find_zero_dates(subset)
 
 
 #Bar Types
@@ -162,7 +175,7 @@ ax.scatter(x=u_fz_a['Norm_Area'], y=u_he_a['Norm_Area'], marker='o',c='grey',alp
 legend = ax.legend(handles=[a,b],loc=9,fontsize='small',ncol=2,title='Bar Type')
 ax.set_ylabel('High Elevation Normalized Area')
 ax.set_xlabel('Fluctuating Zone Normalized Area')
-ax.text(0.29,0.08,'R$^2$=%1.4f' % r )
+ax.text(0.18,0.12,'R$^2$=%1.4f' % r )
 plt.setp(legend.get_title(),fontsize='small')
 plt.tight_layout()
 plt.savefig(r"c:\workspace\Time_Series\Output\Joes_Figs\Norm_Area_bin_bivariate.png",dpi=600)
@@ -172,7 +185,7 @@ plt.savefig(r"c:\workspace\Time_Series\Output\Joes_Figs\Norm_Area_bin_bivariate.
 s,i,r,p,stderr = linregress(r_fz_v['Norm_Vol'], r_he_v['Norm_Vol'])
 
 
-#Area Plot
+#Volume Plot
 fig, ax = plt.subplots(figsize=(7.5,5))
 a = ax.scatter(x=r_fz_v['Norm_Vol'], y=r_he_v['Norm_Vol'], marker='x',c='k',label='Reattachment',s=30)
 ax.plot(r_fz_v['Norm_Vol'], i +s*r_fz_v['Norm_Vol'],'k')
@@ -181,8 +194,69 @@ ax.scatter(x=u_fz_v['Norm_Vol'], y=u_he_v['Norm_Vol'], marker='o',c='grey',alpha
 legend = ax.legend(handles=[a,b],loc=9,fontsize='small',ncol=2,title='Bar Type')
 ax.set_ylabel('High Elevation Normalized Volume')
 ax.set_xlabel('Fluctuating Zone Normalized Volume')
-ax.text(0.15,0.5,'R$^2$=%1.4f' % r )
-ax.set_ylim(0.1,0.8)
+ax.text(0.25,0.5,'R$^2$=%1.4f' % r )
+#ax.set_ylim(0.1,0.8)
+plt.setp(legend.get_title(),fontsize='small')
+plt.tight_layout()
+plt.savefig(r"c:\workspace\Time_Series\Output\Joes_Figs\Norm_Vol_bin_bivariate.png",dpi=600)
+
+#s,i,r,p,stderr = linregress(pd.concat([r_fz_v['Norm_Vol'],s_fz_v['Norm_Vol'],u_fz_v['Norm_Vol']]), pd.concat([r_he_v['Norm_Vol'],s_he_v['Norm_Vol'],u_he_v['Norm_Vol']]))
+
+
+
+#Area Data
+r_fz_a,r_fz_a_tbl= area_norm_data_site(r_fz)
+s_fz_a,s_fz_a_tbl= area_norm_data_site(s_fz)
+u_fz_a,u_fz_a_tbl= area_norm_data_site(u_fz)
+
+r_he_a,r_he_a_tbl= area_norm_data_site(r_he)
+s_he_a,s_he_a_tbl= area_norm_data_site(s_he)
+u_he_a,u_he_a_tbl= area_norm_data_site(u_he)
+
+#Vol Data
+r_fz_v,r_fz_v_tbl= vol_norm_data_site(r_fz)
+s_fz_v,s_fz_v_tbl= vol_norm_data_site(s_fz)
+u_fz_v,u_fz_v_tbl= vol_norm_data_site(u_fz)
+
+r_he_v,r_he_v_tbl= vol_norm_data_site(r_he)
+s_he_v,s_he_v_tbl= vol_norm_data_site(s_he)
+u_he_v,u_he_v_tbl= vol_norm_data_site(u_he)
+
+
+#Linear regression
+s,i,r,p,stderr = linregress(r_fz_a['Norm_Area'], r_he_a['Norm_Area'])
+
+
+#Area Plot
+fig, ax = plt.subplots(figsize=(7.5,5))
+a = ax.scatter(x=r_fz_a['Norm_Area'], y=r_he_a['Norm_Area'], marker='x',c='k',label='Reattachment',s=30)
+ax.plot(r_fz_a['Norm_Area'], i +s*r_fz_a['Norm_Area'],'k')
+b = ax.scatter(x=s_fz_a['Norm_Area'], y=s_he_a['Norm_Area'], marker='o',c='grey',alpha=0.4,label='Other')
+ax.scatter(x=u_fz_a['Norm_Area'], y=u_he_a['Norm_Area'], marker='o',c='grey',alpha=0.4)
+legend = ax.legend(handles=[a,b],loc=9,fontsize='small',ncol=2,title='Bar Type')
+ax.set_ylabel('High Elevation Normalized Area')
+ax.set_xlabel('Fluctuating Zone Normalized Area')
+ax.text(0.18,0.12,'R$^2$=%1.4f' % r )
+plt.setp(legend.get_title(),fontsize='small')
+plt.tight_layout()
+plt.savefig(r"c:\workspace\Time_Series\Output\Joes_Figs\Norm_Area_bin_bivariate.png",dpi=600)
+
+
+#Linear regression
+s,i,r,p,stderr = linregress(r_fz_v['Norm_Vol'], r_he_v['Norm_Vol'])
+
+
+#Volume Plot
+fig, ax = plt.subplots(figsize=(7.5,5))
+a = ax.scatter(x=r_fz_v['Norm_Vol'], y=r_he_v['Norm_Vol'], marker='x',c='k',label='Reattachment',s=30)
+ax.plot(r_fz_v['Norm_Vol'], i +s*r_fz_v['Norm_Vol'],'k')
+b = ax.scatter(x=s_fz_v['Norm_Vol'], y=s_he_v['Norm_Vol'], marker='o',c='grey',alpha=0.4,label='Other')
+ax.scatter(x=u_fz_v['Norm_Vol'], y=u_he_v['Norm_Vol'], marker='o',c='grey',alpha=0.4)
+legend = ax.legend(handles=[a,b],loc=9,fontsize='small',ncol=2,title='Bar Type')
+ax.set_ylabel('High Elevation Normalized Volume')
+ax.set_xlabel('Fluctuating Zone Normalized Volume')
+ax.text(0.25,0.5,'R$^2$=%1.4f' % r )
+#ax.set_ylim(0.1,0.8)
 plt.setp(legend.get_title(),fontsize='small')
 plt.tight_layout()
 plt.savefig(r"c:\workspace\Time_Series\Output\Joes_Figs\Norm_Vol_bin_bivariate.png",dpi=600)
