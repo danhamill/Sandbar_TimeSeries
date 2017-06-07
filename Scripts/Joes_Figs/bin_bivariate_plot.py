@@ -162,6 +162,44 @@ s_he_v,s_he_v_tbl= vol_norm_data(s_he)
 u_he_v,u_he_v_tbl= vol_norm_data(u_he)
 
 
+
+r = r_he_a.merge(r_he_v, left_index=True,right_index=True,how='left')[['Norm_Area','Norm_Vol']]
+r = r.rename(columns={'Norm_Area':'Norm_Area_High_Elevation','Norm_Vol':'Norm_Vol_High_Elevation'})
+
+r = r.merge(r_fz_a[['Norm_Area']],left_index=True,right_index=True,how='left')
+r = r.rename(columns={'Norm_Area':'Norm_Area_Fluctuating_Zone'})
+
+r = r.merge(r_fz_v[['Norm_Vol']],left_index=True,right_index=True,how='left')
+r = r.rename(columns={'Norm_Vol':'Norm_Vol_Fluctuating_Zone'})
+
+
+u = u_he_a.merge(u_he_v, left_index=True,right_index=True,how='left')[['Norm_Area','Norm_Vol']]
+u = u.rename(columns={'Norm_Area':'Norm_Area_High_Elevation','Norm_Vol':'Norm_Vol_High_Elevation'})
+
+u = u.merge(u_fz_a[['Norm_Area']],left_index=True,right_index=True,how='left')
+u = u.rename(columns={'Norm_Area':'Norm_Area_Fluctuating_Zone'})
+
+u = u.merge(u_fz_v[['Norm_Vol']],left_index=True,right_index=True,how='left')
+u = u.rename(columns={'Norm_Vol':'Norm_Vol_Fluctuating_Zone'})
+
+
+s = s_he_a.merge(s_he_v, left_index=True,right_index=True,how='left')[['Norm_Area','Norm_Vol']]
+s = s.rename(columns={'Norm_Area':'Norm_Area_High_Elevation','Norm_Vol':'Norm_Vol_High_Elevation'})
+
+s = s.merge(s_fz_a[['Norm_Area']],left_index=True,right_index=True,how='left')
+s = s.rename(columns={'Norm_Area':'Norm_Area_Fluctuating_Zone'})
+
+s = s.merge(s_fz_v[['Norm_Vol']],left_index=True,right_index=True,how='left')
+s = s.rename(columns={'Norm_Vol':'Norm_Vol_Fluctuating_Zone'})
+
+
+writer = pd.ExcelWriter(out_root + os.sep + "bin_exchange_norm_area_vol_data.xlsx",engine='xlsxwriter')
+r.to_excel(writer,sheet_name='Reattachment')
+s.to_excel(writer,sheet_name='Separation')
+u.to_excel(writer,sheet_name='Undifferentiated')
+writer.save()
+del writer, s,u,r
+
 #Linear regression
 s,i,r,p,stderr = linregress(r_fz_a['Norm_Area'], r_he_a['Norm_Area'])
 
