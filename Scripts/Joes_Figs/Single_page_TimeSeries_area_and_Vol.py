@@ -114,13 +114,16 @@ gc = subset.query(gc_query)
 mc = mc[mc['Site'].isin(set(lu_sites['Sediment Deficit Sites']))]
 gc = gc[gc['Site'].isin(set(lu_sites['Sediment Deficit Sites']))]
 
-
+#Total Area
 mc_total = pd.pivot_table(mc, index=['TripDate'], values=['Area_2D'],aggfunc=np.sum)
 gc_total = pd.pivot_table(gc, index=['TripDate'], values=['Area_2D'],aggfunc=np.sum)
 
+
+#Average Area
 mc_average, mc_avg_area_tbl = area_average_data(mc)
 gc_average, gc_avg_area_tbl = area_average_data(gc)
 
+#Norm Area
 mc_norm_area, mc_norm_area_tbl = area_norm_data(mc)
 gc_norm_area, gc_norm_area_tbl = area_norm_data(gc)
 
@@ -242,11 +245,25 @@ plt.savefig(out_root + os.sep + "Time_Series_Norm_vol_above_8k.png",dpi=600)
 
 
 writer = pd.ExcelWriter(out_root + os.sep + "Time_series_area_vol_data.xlsx",engine='xlsxwriter')
-mc_total_vol_tbl.to_excel(writer,sheet_name='MC_Total_Area')
+
+
 mc_avg_area_tbl.to_excel(writer,sheet_name='MC_Average_Area')
-mc_norm_area_tbl.to_excel(writer,sheet_name='MC_Normalized_Area')
-gc_total_vol_tbl.to_excel(writer,sheet_name='GC_Total_Area')
 gc_avg_area_tbl.to_excel(writer,sheet_name='GC_Average_Area')
+
+mc_norm_area_tbl.to_excel(writer,sheet_name='MC_Normalized_Area')
 gc_norm_area_tbl.to_excel(writer,sheet_name='GC_Normalized_Area')
+
+mc_avg_vol_tbl.to_excel(writer,sheet_name='MC_Average_Volume')
+gc_avg_vol_tbl.to_excel(writer,sheet_name='GC_Average_Volume')
+
+mc_norm_vol_tbl.to_excel(writer,sheet_name='MC_Normalized_Volume')
+gc_norm_vol_tbl.to_excel(writer,sheet_name='GC_Normalized_Volume')
+
+pd.pivot_table(mc,values='Area_2D', index='TripDate',aggfunc=[np.sum]).to_excel(writer,sheet_name='MC_Total_Area')
+pd.pivot_table(gc,values='Area_2D', index='TripDate',aggfunc=[np.sum]).to_excel(writer,sheet_name='GC_Total_Area')
+
+pd.pivot_table(mc,values='Volume', index='TripDate',aggfunc=[np.sum]).to_excel(writer,sheet_name='MC_Total_Volume')
+pd.pivot_table(gc,values='Volume', index='TripDate',aggfunc=[np.sum]).to_excel(writer,sheet_name='GC_Total_Volume')
+
 writer.save()
 
