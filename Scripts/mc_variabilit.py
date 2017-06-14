@@ -128,7 +128,7 @@ if __name__ == '__main__':
     all_sites = query_df(data)
     all_sites = all_sites.query('Bar_type != "Total"')
     
-    all_sites = all
+
     
 #    #Find extra sites
 #    all_site_df = pd.DataFrame(data=all_sites.Site.unique(),columns=['Site'])
@@ -159,7 +159,7 @@ if __name__ == '__main__':
     ax.legend(loc=9, ncol=2,fontsize=10)
     plt.tight_layout()
     plt.savefig(oName,dpi=600)
-    plt.show()
+    
 
     
     df = pd.DataFrame(columns=['d','std'])
