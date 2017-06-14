@@ -55,11 +55,70 @@ pd.DataFrame(area_new).describe()
 df = pd.DataFrame(combined).merge(pd.DataFrame(area_old),how='left',left_index=True, right_index=True)
 df = df.rename(columns={'0_x':'All Sites N=22','0_y':'Long Term Sites: N=12'})
 df = df.merge(pd.DataFrame(area_new,columns=['Additional Sites N=10']), how='left',left_index=True, right_index=True)
-fig, ax = plt.subplots(figsize=(7.5,5))
 
-df.plot.box(ax=ax)
+df_all = df['All Sites N=22'].to_frame().merge(pd.DataFrame(lt_bt+new_bt),left_index=True, right_index=True)
+df_old = pd.DataFrame({'Area':area_old,'Bar Type':['r','s','s','r','r','u','r','s','r','r','s','r']})
+df_new = pd.DataFrame({'Area':area_new,'Bar Type':['u','u','r','s','r','s','r','r','r','u']})
+
+fontP = FontProperties()
+fontP.set_size('x-small')
+fig, (ax,ax1,ax2) = plt.subplots(figsize=(7.5,5),ncols=3,sharey=True)
+
+r = df['All Sites N=22'].plot.box(ax=ax, showfliers=False,return_type='dict')
+x = np.random.normal(1,0.04,len(df_all[df_all[0] == 'r']['All Sites N=22']))
+ax.plot(x,df_all[df_all[0] == 'r']['All Sites N=22'],marker='*',lw=0,label='Reattachment: N=12',markersize=8,c='y',alpha=0.4)
+x = np.random.normal(1,0.04,len(df_all[df_all[0] == 's']['All Sites N=22']))
+ax.plot(x,df_all[df_all[0] == 's']['All Sites N=22'],marker='d',lw=0,label='Separation: N=8',markersize=8,alpha=0.4)
+x = np.random.normal(1,0.04,len(df_all[df_all[0] == 'u']['All Sites N=22']))
+ax.plot(x,df_all[df_all[0] == 'u']['All Sites N=22'],marker='o',lw=0,label='Undifferientated: N=4',markersize=8,alpha=0.4)
+legend = ax.legend(loc=2,title='A',prop=fontP,numpoints=1)
+ax.set_ylim(0,40000)
+
+
+r1 = df['Long Term Sites: N=12'].plot.box(ax=ax1,sharey=ax, showfliers=False,return_type='dict')
+
+x = np.random.normal(1,0.04,len(df_old[df_old['Bar Type'] == 'r']['Area']))
+ax1.plot(x,df_old[df_old['Bar Type'] == 'r']['Area'],marker='*',lw=0,label='Reattachment: N=7',markersize=8,c='y',alpha=0.4)
+
+x = np.random.normal(1,0.04,len(df_old[df_old['Bar Type'] == 's']['Area']))
+ax1.plot(x,df_old[df_old['Bar Type'] == 's']['Area'],marker='d',lw=0,label='Separation: N=6',markersize=8,alpha=0.4)
+
+x = np.random.normal(1,0.04,len(df_old[df_old['Bar Type'] == 'u']['Area']))
+ax1.plot(x,df_old[df_old['Bar Type'] == 'u']['Area'],marker='o',lw=0,label='Undifferientated: N=1',markersize=8,alpha=0.4)
+legend1 = ax1.legend(loc=2,title='B',prop=fontP,numpoints=1)
+
+r2 = df['Additional Sites N=10'].plot.box(ax=ax2,sharey=ax, showfliers=False,return_type='dict')
+x = np.random.normal(1,0.04,len(df_new[df_new['Bar Type'] == 'r']['Area']))
+ax2.plot(x,df_new[df_new['Bar Type'] == 'r']['Area'],marker='*',lw=0,label='Reattachment: N=5',markersize=8,c='y',alpha=0.4)
+x = np.random.normal(1,0.04,len(df_new[df_new['Bar Type'] == 's']['Area']))
+ax2.plot(x,df_new[df_new['Bar Type'] == 's']['Area'],marker='d',lw=0,label='Separation: N=2',markersize=8,alpha=0.4)
+x = np.random.normal(1,0.04,len(df_new[df_new['Bar Type'] == 'u']['Area']))
+ax2.plot(x,df_new[df_new['Bar Type'] == 'u']['Area'],marker='o',lw=0,label='Undifferientated: N=3',markersize=8,alpha=0.4)
+legend2 = ax2.legend(loc=2,title='C',prop=fontP,numpoints=1)
+
+
+plt.setp(legend.get_title(),fontsize='large')
+plt.setp(legend1.get_title(),fontsize='large')
+plt.setp(legend2.get_title(),fontsize='large')
+
+plt.setp(r['boxes'], color='black',lw=1.5) 
+plt.setp(r['whiskers'], color='black',lw=1.5) 
+plt.setp(r['caps'], color='black',lw=1.5)
+plt.setp(r['medians'],lw=1.5)
+
+plt.setp(r1['boxes'], color='black',lw=1.5) 
+plt.setp(r1['whiskers'], color='black',lw=1.5) 
+plt.setp(r1['caps'], color='black',lw=1.5)
+plt.setp(r1['medians'],lw=1.5)
+
+plt.setp(r2['boxes'], color='black',lw=1.5) 
+plt.setp(r2['whiskers'], color='black',lw=1.5) 
+plt.setp(r2['caps'], color='black',lw=1.5)
+plt.setp(r2['medians'],lw=1.5)
+ 
 ax.set_ylabel('TOTAL EDDY AREA, IN METERS SQUARED')
 ax.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
+#ax.text('A',horizontalalignment='left')
 plt.tight_layout()
 plt.savefig(r"C:\workspace\Time_Series\Output\Joes_Figs\mc_area_boxplot.png",dpi=600)
 
@@ -91,8 +150,7 @@ undif = plt.Line2D([0,0],[0,1], color='green',marker='o',linestyle=' ')
 reatt = plt.Line2D([0,0],[0,1], color='red',marker='*',linestyle=' ')
 sep = plt.Line2D([0,0],[0,1], color='blue',marker='x',linestyle=' ')
 
-fontP = FontProperties()
-fontP.set_size('x-small')
+
 
 fig,(ax,ax1) = plt.subplots(figsize=(7.5,5),ncols=2,sharey=True)
 
