@@ -168,7 +168,9 @@ ax1.legend(loc=9,ncol=2,fontsize=10)
 ax.set_autoscale_on(False)
 ax1.set_autoscale_on(False)
 ax2.set_autoscale_on(False)
-
+ax.set_title('A',fontsize='x-large',loc='left')
+ax1.set_title('B',fontsize='x-large',loc='left')
+ax2.set_title('C',fontsize='x-large',loc='left')
 ax.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
 ax1.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
 #ax2.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
@@ -219,28 +221,24 @@ ax1.set_ylim(0,6000)
 ax1.legend(loc=9,ncol=2,fontsize=10)
 
 
-fig,ax2 = plt.subplots(figsize=(7.5,3.33))
+
 mc_norm_vol.plot(y = 'Norm_Vol',ax = ax2, yerr = 'y_err',label = label_mc,linestyle='--',color='green',marker='x')
 gc_norm_vol.plot(y = 'Norm_Vol', ax = ax2, yerr = 'y_err',label = label_gc,linestyle='-',color='blue',marker='o' )
 
 ax2.set_xlim(pd.Timestamp('1990-01-01'),  pd.Timestamp('2018-01-01'))
 ax2.set_ylabel('NORMALIZED SANDBAR VOLUME')
 ax2.set_xlabel('DATE')
-ax2.set_ylim(0.1,0.8)
+ax2.set_ylim(0.1,0.7)
 ax2.legend(loc=9,ncol=2,fontsize=10)
-
-#
-#ax.set_autoscale_on(False)
-#ax1.set_autoscale_on(False)
+ax.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
+ax1.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
 ax2.set_autoscale_on(False)
 
-
-#ax.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
-#ax1.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
-#ax2.get_yaxis().set_major_formatter(tkr.FuncFormatter(lambda x, p: format(int(x), ',')))
+ax.set_title('A',fontsize='x-large',loc='left')
+ax1.set_title('B',fontsize='x-large',loc='left')
+ax2.set_title('C',fontsize='x-large',loc='left')
 plt.tight_layout()
-
-
+plt.tight_layout()
 plt.savefig(out_root + os.sep + "Time_Series_Norm_vol_above_8k.png",dpi=600)
 
 

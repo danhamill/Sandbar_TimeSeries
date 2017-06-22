@@ -82,6 +82,9 @@ def vol_norm_data_site(df,section=None):
     tmp_pvt['y_err']=yerr
     return tmp_pvt, tmp_2
 
+
+
+ 
     
 if platform.system() == 'Darwin':
     sandbar_root = '/Users/danielhamill/git_clones/sandbar_process'
@@ -107,7 +110,6 @@ data['TripDate'] = pd.to_datetime(data['TripDate'], format='%Y-%m-%d')
 
 fz_subset = data[(data.Time_Series == 'long') & (data.Site !='m006r')& (data.Site !='035l_r') & (data.Site !='062r') & (data.Site !='068r') & (data.Site !='167l')  & (data.Site !='202r_r') & (data.SitePart == 'Eddy') & (data.Plane_Height == 'eddy8kto25k') & (data.Bar_type != 'Total')]   
 fz_subset = fz_subset[fz_subset['TripDate'] <='2003-09-20']
-
 mc_query = 'Segment == ["1_UMC","2_LMC"]'
 gc_query = 'Segment != ["1_UMC","2_LMC"]'
 
@@ -138,7 +140,7 @@ he_gc_norm_area, he_gc_norm_area_tbl_deficit = area_norm_data(he_gc)
 he_mc_norm_vol, he_mc_norm_vol_tbl_deficit = vol_norm_data(he_mc)
 he_gc_norm_vol, he_gc_norm_vol_tbl_deficit = vol_norm_data(he_gc)
 
-fig,((ax,ax1),(ax2,ax3)) = plt.subplots(figsize=(7.5,6.66), ncols=2,nrows=2)
+fig,((ax,ax1),(ax2,ax3)) = plt.subplots(figsize=(7.5,6.66), ncols=2,nrows=2,sharex=True)
 
 #Area
 he_mc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax, label = 'Marble Canyon: High Elevation', color='blue',marker='o',sharex=ax2)
@@ -173,6 +175,8 @@ ax2.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
 ax3.set_xlim(pd.Timestamp('1990-01-01'), pd.Timestamp('2004-01-01'))
 ax2.set_xlabel('Date')
 ax3.set_xlabel('Date')
+ax.set_title('A',fontsize='x-large',loc='left')
+ax2.set_title('B',fontsize='x-large',loc='left')
 plt.tight_layout()
 plt.savefig(out_root + os.sep + 'sediment_deficit_bin_time_series.png', dpi=600)
 
@@ -213,7 +217,7 @@ he_gc_norm_area, he_gc_norm_area_tbl_enrich = area_norm_data(he_gc)
 he_mc_norm_vol, he_mc_norm_vol_tbl_enrich = vol_norm_data(he_mc)
 he_gc_norm_vol, he_gc_norm_vol_tbl_enrich = vol_norm_data(he_gc)
 
-fig,((ax,ax1),(ax2,ax3)) = plt.subplots(figsize=(7.5,6.66), ncols=2,nrows=2)
+fig,((ax,ax1),(ax2,ax3)) = plt.subplots(figsize=(7.5,6.66), ncols=2,nrows=2,sharex=True)
 
 #Area
 he_mc_norm_area.plot(y = 'Norm_Area', yerr='y_err',ax = ax, label = 'Marble Canyon: High Elevation', color='blue',marker='o',sharex=ax2)
@@ -232,11 +236,11 @@ he_gc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax3, label = 'Grand Canyon
 fz_gc_norm_vol.plot(y = 'Norm_Vol', yerr='y_err',ax = ax3, label = 'Grand Canyon: Fluctuating Zone', color='green',linestyle='--',marker='x',sharey=ax2)
 
 ax.set_ylim(0.1,0.4)    
-ax1.set_ylim(0.0,0.4)
+ax1.set_ylim(0.1,0.4)
 ax.set_ylabel('Normalized Sandbar Area')
 
-ax2.set_ylim(0.1,1.0)    
-ax3.set_ylim(0.1,1.0)    
+ax2.set_ylim(0.1,0.8)    
+ax3.set_ylim(0.1,0.8)    
 ax2.set_ylabel('Normalized Sandbar Volume')
 
 ax1.legend(loc=9,fontsize=8)
@@ -248,8 +252,9 @@ ax2.set_xlim(pd.Timestamp('2003-01-01'), pd.Timestamp('2017-01-01'))
 ax3.set_xlim(pd.Timestamp('2003-01-01'), pd.Timestamp('2017-01-01'))
 ax2.set_xlabel('Date')
 ax3.set_xlabel('Date')
-ax2.set_autoscale_on(False)
-ax3.set_autoscale_on(False)
+
 ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+ax.set_title('A',fontsize='x-large',loc='left')
+ax2.set_title('B',fontsize='x-large',loc='left')
 plt.tight_layout()
 plt.savefig(out_root + os.sep + 'sediment_enrichment_bin_time_series.png', dpi=600)
