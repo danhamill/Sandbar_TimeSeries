@@ -15,7 +15,7 @@ def thick_calc(df):
     
     df.loc[:,'Thickness'] = df.loc[:,'Volume']/df.loc[:,'Area_2D']
     df.loc[:,'Norm_Thickness'] = df.loc[:,'Volume']/df.loc[:,'Area_2D'] * df.loc[:,'Max_Area'] /df.loc[:,'MaxVol']
-    df = df[['Site','TripDate','Thickness','Norm_Thickness']].dropna()
+    df = df[['Site','TripDate','Thickness','Norm_Thickness']]
     return df
 
 
@@ -87,7 +87,7 @@ data = pd.read_csv(data_file, sep =',')
 data['TripDate'] = pd.to_datetime(data['TripDate'], format='%Y-%m-%d')
 
 
-subset = data[(data.Time_Series == 'long') & (data.Site !='m006r')& (data.Site !='033l') & (data.Site !='062r') & (data.Site !='068r') & (data.Site !='167l') & (data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.Bar_type != 'Total')]   
+subset = data[(data.Time_Series == 'long') & (data.Site !='m006r')& (data.Site !='062r')&(data.Site != '035l_r') & (data.Site !='045l_s')& (data.Site !='068r') & (data.Site !='167l') & (data.SitePart == 'Eddy') & (data.Plane_Height != 'eddyminto8k') & (data.Bar_type != 'Total')]   
 subset = pd.pivot_table(subset,index=['Site','SurveyDate','SitePart','TripDate','SiteRange','Segment','Bar_type','Time_Series','Period'],values=['Area_2D','Area_3D','Volume','Errors','MaxVol','Max_Area'],aggfunc=np.sum).reset_index()
 mc_query = 'Segment == ["1_UMC","2_LMC"]'
 gc_query = 'Segment != ["1_UMC","2_LMC"]'
@@ -102,60 +102,71 @@ mc_df_a,gc_df_a = all_data(mc_t,gc_t,'1990-06-10','2016-10-01')
 mc_df_d,gc_df_d = all_data(mc_t,gc_t,'1990-06-10','2003-09-20')
 mc_df_e,gc_df_e = enrich_data(mc_t,gc_t,'2003-09-20','2016-10-01')
 
-
+cm = plt.cm.get_cmap('coolwarm')
 
 fig, ((ax,ax1,ax2),(ax3,ax4,ax5)) = plt.subplots(ncols=3,nrows=2,figsize=(7.5,6))
 
 #Entire Time Series
 bins=[round(x,1)for x in np.linspace(-1,1,21)]
 counts, division = np.histogram(mc_df_a.loc[:,'Delta_Thick'],bins=bins)
-mc_df_a.loc[:,'Delta_Thick'].hist(ax=ax, bins=division,color='green',label='Marble Canyon',hatch='//')
+mc_df_a.loc[:,'Delta_Thick'].hist(ax=ax, bins=division,color='gray',label='Marble Canyon')
 ax.xaxis.set_ticks(np.arange(-1, 1.5, 0.5))
 ax.yaxis.set_ticks(np.arange(0, 5, 1))
 ax.set_title('A. 1990-2016')
-ax.set_ylabel('Number of Sites')
-ax.legend(fontsize='x-small',loc=2)
+ax.set_ylabel('Number of Sites in \n Marble Canyon')
+#ax.legend(fontsize='x-small',loc=2)
 
 #Deficit
 bins=[round(x,1)for x in np.linspace(-1,0.6,16)]
 counts, division = np.histogram(mc_df_a.loc[:,'Delta_Thick'],bins=bins)
-mc_df_d.loc[:,'Delta_Thick'].hist(ax=ax1, bins=division,color='green',hatch='//')
-ax1.xaxis.set_ticks(np.arange(-1, 0.75, 0.5))
+mc_df_d.loc[:,'Delta_Thick'].hist(ax=ax1, bins=division,color='gray', label='1990-2003')
+ax1.xaxis.set_ticks(np.arange(-1, 1.5, 0.5))
 ax1.yaxis.set_ticks(np.arange(0, 5, 1))
 ax1.set_title('B. 1990-2003')
-ax1.set_xlabel('$\Delta$' + ' Thickness, in Meters')
+ax1.set_xlabel('Change in Thickness, in Meters')
+
 #Enrich
-mc_df_e.loc[:,'Delta_Thick'].hist(ax=ax2, bins=division,color='green',hatch='//')
-ax2.xaxis.set_ticks(np.arange(-1, 1.5, 0.5))
+bins=[round(x,1)for x in np.linspace(-1,1,21)]
+counts, division = np.histogram(mc_df_e.loc[:,'Delta_Thick'],bins=bins)
+mc_df_e.loc[:,'Delta_Thick'].hist(ax=ax2, bins=division,color='gray',label='2003-2016')
+ax2.xaxis.set_ticks(np.arange(-1, 2, 0.5))
 ax2.yaxis.set_ticks(np.arange(0, 5, 1))
 ax2.set_title('C. 2003-2016')
 
 bins = [round(x,1)for x in np.linspace(-1,1.5,24)]
 counts, division = np.histogram(gc_df_a.loc[:,'Delta_Thick'],bins=bins)
-gc_df_a.loc[:,'Delta_Thick'].hist(ax=ax3, bins=division,label='Grand Canyon',hatch='oo')
-ax3.xaxis.set_ticks(np.arange(-1, 2.0 ,0.5))
+gc_df_a.loc[:,'Delta_Thick'].hist(ax=ax3, bins=division,label='Grand Canyon',color='gray')
+ax3.xaxis.set_ticks(np.arange(-1, 2.5 ,0.5))
 ax3.yaxis.set_ticks(np.arange(0, 6, 1))
 ax3.set_title('D. 1990-2016')
-ax3.set_ylabel('Number of Sites')
-ax3.legend(fontsize='x-small',loc=2)
+ax3.set_ylabel('Number of Sites in \n Grand Canyon')
+
 
 #Deficit
 bins=[round(x,1)for x in np.linspace(-1,1,21)]
-counts, division = np.histogram(gc_df_d.loc[:,'Delta_Thick'],bins=bins,)
-gc_df_d.loc[:,'Delta_Thick'].hist(ax=ax4, bins=division,hatch='oo')
+counts, division = np.histogram(gc_df_d.loc[:,'Delta_Thick'],bins=bins)
+gc_df_d.loc[:,'Delta_Thick'].hist(ax=ax4, bins=division,color='gray')
 ax4.xaxis.set_ticks(np.arange(-1, 1.5, 0.5))
 ax4.yaxis.set_ticks(np.arange(0, 5, 1))
 ax4.set_title('E. 1990-2003')
-ax4.set_xlabel('$\Delta$' + ' Thickness, in Meters')
+ax4.set_xlabel('Change in Thickness, in Meters')
 
 #Enrich
-bins=[round(x,1)for x in np.linspace(-0.6,1,16)]
+bins=[round(x,1)for x in np.linspace(-1,1,21)]
 counts, division = np.histogram(gc_df_e.loc[:,'Delta_Thick'],bins=bins)
-gc_df_e.loc[:,'Delta_Thick'].hist(ax=ax5, bins=division,hatch='oo',edgecolor='k')
-#ax5.set_xlim(-0.6,1.0)
+a = gc_df_e.loc[:,'Delta_Thick'].hist(ax=ax5, bins=division,color='gray')#,hatch='o'
 ax5.xaxis.set_ticks(np.arange(-1,1.5, 0.5))
 ax5.yaxis.set_ticks(np.arange(0, 6, 1))
 ax5.set_title('F. 2003-2016')
-
+ax5.
 plt.tight_layout()
 plt.savefig(out_root + os.sep + 'Canyon_Thickness_Changes.png')
+
+
+
+#bin_centers = 0.5 * (division[:-1] + division[1:])
+#col = bin_centers - min(bin_centers)
+#col /= max(col)
+#
+#for c,p in zip(col, a.patches):
+#    plt.setp(p, 'facecolor', cm(c))
