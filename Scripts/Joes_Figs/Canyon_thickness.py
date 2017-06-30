@@ -63,6 +63,17 @@ def enrich_data(mc_t,gc_t,b,e):
     gc_df.loc[:,'Delta_N_Thick'] = gc_df.loc[:,'Norm_Thickness_y'] - gc_df.loc[:,'Norm_Thickness_x']
     gc_df = gc_df[['Site','Delta_Thick','Delta_N_Thick']]
     return mc_df, gc_df
+
+def calc_averages(mc_t,gc_t):
+    pvt_mc = pd.pivot_table(mc_t, index=['TripDate'],values=['Thickness'],aggfunc=np.nanmean).reset_index()
+    pvt_gc = pd.pivot_table(gc_t, index=['TripDate'],values=['Thickness'],aggfunc=np.nanmean).reset_index()
+    pvt_mc = pvt_mc[(pvt_mc['TripDate'] == '1990-06-10') | (pvt_mc['TripDate'] == '2003-09-20') | (pvt_mc['TripDate'] == '2016-10-01')]
+    pvt_gc = pvt_mc[(pvt_gc['TripDate'] == '1990-06-10') | (pvt_gc['TripDate'] == '2003-09-20') | (pvt_gc['TripDate'] == '2016-10-01')]
+    pvt_mc = pvt_mc.rename(columns={'Thickness':'Marble Canyon Average Thickness'})
+    pvt_gc = pvt_gc.rename(columns={'Thickness':'Grand Canyon Average Thickness'})
+    merge = pvt_mc.merge(pvt_gc, left_on='TripDate', right_on='TripDate',how='left')
+    return merge
+    
     
 if platform.system() == 'Darwin':
     sandbar_root = '/Users/danielhamill/git_clones/sandbar_process'
@@ -102,7 +113,6 @@ mc_df_a,gc_df_a = all_data(mc_t,gc_t,'1990-06-10','2016-10-01')
 mc_df_d,gc_df_d = all_data(mc_t,gc_t,'1990-06-10','2003-09-20')
 mc_df_e,gc_df_e = enrich_data(mc_t,gc_t,'2003-09-20','2016-10-01')
 
-cm = plt.cm.get_cmap('coolwarm')
 
 fig, ((ax,ax1,ax2),(ax3,ax4,ax5)) = plt.subplots(ncols=3,nrows=2,figsize=(7.5,6))
 
@@ -136,7 +146,7 @@ ax2.set_title('C. 2003-2016')
 bins = [round(x,1)for x in np.linspace(-1,1.5,24)]
 counts, division = np.histogram(gc_df_a.loc[:,'Delta_Thick'],bins=bins)
 gc_df_a.loc[:,'Delta_Thick'].hist(ax=ax3, bins=division,label='Grand Canyon',color='gray')
-ax3.xaxis.set_ticks(np.arange(-1, 2.5 ,0.5))
+ax3.xaxis.set_ticks(np.arange(-1, 2.5 ,0.75))
 ax3.yaxis.set_ticks(np.arange(0, 6, 1))
 ax3.set_title('D. 1990-2016')
 ax3.set_ylabel('Number of Sites in \n Grand Canyon')
@@ -153,14 +163,38 @@ ax4.set_xlabel('Change in Thickness, in Meters')
 
 #Enrich
 bins=[round(x,1)for x in np.linspace(-1,1,21)]
-counts, division = np.histogram(gc_df_e.loc[:,'Delta_Thick'],bins=bins)
+counts, division = np.histogram(gc_df_e.loc[:,'Delta_Thick'].dropna(),bins=bins)
 a = gc_df_e.loc[:,'Delta_Thick'].hist(ax=ax5, bins=division,color='gray')#,hatch='o'
 ax5.xaxis.set_ticks(np.arange(-1,1.5, 0.5))
 ax5.yaxis.set_ticks(np.arange(0, 6, 1))
 ax5.set_title('F. 2003-2016')
-ax5.
+
 plt.tight_layout()
 plt.savefig(out_root + os.sep + 'Canyon_Thickness_Changes.png')
+
+#Data Export section
+
+avg_data = calc_averages(mc_t,gc_t)
+
+#Marble Canyon
+mc_df_a = mc_df_a.rename(columns={'Delta_Thick':'1990-2016 Change in Thickness'})
+mc_df_d = mc_df_d.rename(columns={'Delta_Thick':'1990-2003 Change in Thickness'})
+mc_df_e = mc_df_e.rename(columns={'Delta_Thick':'2003-2016 Change in Thickness'})
+
+gc_df_a = gc_df_a.rename(columns={'Delta_Thick':'1990-2016 Change in Thickness'})
+gc_df_d = gc_df_d.rename(columns={'Delta_Thick':'1990-2003 Change in Thickness'})
+gc_df_e = gc_df_e.rename(columns={'Delta_Thick':'2003-2016 Change in Thickness'})
+
+mc_out = mc_df_e[['Site','2003-2016 Change in Thickness']].merge(mc_df_a[['Site','1990-2016 Change in Thickness']].merge(mc_df_d[['Site','1990-2003 Change in Thickness']],left_on='Site',right_on='Site',how='left'),left_on='Site',right_on='Site',how='left')
+gc_out = gc_df_e[['Site','2003-2016 Change in Thickness']].merge(gc_df_a[['Site','1990-2016 Change in Thickness']].merge(gc_df_d[['Site','1990-2003 Change in Thickness']],left_on='Site',right_on='Site',how='left'),left_on='Site',right_on='Site',how='left')
+
+#Average thickness
+
+writer = pd.ExcelWriter(out_root + os.sep + "canyon_thickness.xlsx",engine='xlsxwriter')
+mc_out.to_excel(writer,sheet_name='Marble Canyon')
+gc_out.to_excel(writer,sheet_name='Grand Canyon')
+avg_data.to_excel(writer, sheet_name='Average_Thickness')
+writer.save()
 
 
 
