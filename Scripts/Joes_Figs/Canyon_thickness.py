@@ -68,7 +68,7 @@ def calc_averages(mc_t,gc_t):
     pvt_mc = pd.pivot_table(mc_t, index=['TripDate'],values=['Thickness'],aggfunc=np.nanmean).reset_index()
     pvt_gc = pd.pivot_table(gc_t, index=['TripDate'],values=['Thickness'],aggfunc=np.nanmean).reset_index()
     pvt_mc = pvt_mc[(pvt_mc['TripDate'] == '1990-06-10') | (pvt_mc['TripDate'] == '2003-09-20') | (pvt_mc['TripDate'] == '2016-10-01')]
-    pvt_gc = pvt_mc[(pvt_gc['TripDate'] == '1990-06-10') | (pvt_gc['TripDate'] == '2003-09-20') | (pvt_gc['TripDate'] == '2016-10-01')]
+    pvt_gc = pvt_gc[(pvt_gc['TripDate'] == '1990-06-10') | (pvt_gc['TripDate'] == '2003-09-20') | (pvt_gc['TripDate'] == '2016-10-01')]
     pvt_mc = pvt_mc.rename(columns={'Thickness':'Marble Canyon Average Thickness'})
     pvt_gc = pvt_gc.rename(columns={'Thickness':'Grand Canyon Average Thickness'})
     merge = pvt_mc.merge(pvt_gc, left_on='TripDate', right_on='TripDate',how='left')
@@ -119,7 +119,7 @@ fig, ((ax,ax1,ax2),(ax3,ax4,ax5)) = plt.subplots(ncols=3,nrows=2,figsize=(7.5,6)
 #Entire Time Series
 bins=[round(x,1)for x in np.linspace(-1,1,21)]
 counts, division = np.histogram(mc_df_a.loc[:,'Delta_Thick'],bins=bins)
-mc_df_a.loc[:,'Delta_Thick'].hist(ax=ax, bins=division,color='gray',label='Marble Canyon')
+mc_df_a.loc[:,'Delta_Thick'].hist(ax=ax, bins=division,color='gray',label='Marble Canyon',xrot=45,grid=False,width=0.06)
 ax.xaxis.set_ticks(np.arange(-1, 1.5, 0.5))
 ax.yaxis.set_ticks(np.arange(0, 5, 1))
 ax.set_title('A. 1990-2016')
@@ -129,7 +129,7 @@ ax.set_ylabel('Number of Sites in \n Marble Canyon')
 #Deficit
 bins=[round(x,1)for x in np.linspace(-1,0.6,16)]
 counts, division = np.histogram(mc_df_a.loc[:,'Delta_Thick'],bins=bins)
-mc_df_d.loc[:,'Delta_Thick'].hist(ax=ax1, bins=division,color='gray', label='1990-2003')
+mc_df_d.loc[:,'Delta_Thick'].hist(ax=ax1, bins=division,color='gray', label='1990-2003',xrot=45,grid=False,width=0.06)
 ax1.xaxis.set_ticks(np.arange(-1, 1.5, 0.5))
 ax1.yaxis.set_ticks(np.arange(0, 5, 1))
 ax1.set_title('B. 1990-2003')
@@ -138,15 +138,15 @@ ax1.set_xlabel('Change in Thickness, in Meters')
 #Enrich
 bins=[round(x,1)for x in np.linspace(-1,1,21)]
 counts, division = np.histogram(mc_df_e.loc[:,'Delta_Thick'],bins=bins)
-mc_df_e.loc[:,'Delta_Thick'].hist(ax=ax2, bins=division,color='gray',label='2003-2016')
+mc_df_e.loc[:,'Delta_Thick'].hist(ax=ax2, bins=division,color='gray',label='2003-2016',xrot=45,grid=False,width=0.06)
 ax2.xaxis.set_ticks(np.arange(-1, 2, 0.5))
 ax2.yaxis.set_ticks(np.arange(0, 5, 1))
 ax2.set_title('C. 2003-2016')
 
 bins = [round(x,1)for x in np.linspace(-1,1.5,24)]
 counts, division = np.histogram(gc_df_a.loc[:,'Delta_Thick'],bins=bins)
-gc_df_a.loc[:,'Delta_Thick'].hist(ax=ax3, bins=division,label='Grand Canyon',color='gray')
-ax3.xaxis.set_ticks(np.arange(-1, 2.5 ,0.75))
+gc_df_a.loc[:,'Delta_Thick'].hist(ax=ax3, bins=division,label='Grand Canyon',color='gray',xrot=45,grid=False,width=0.06)
+ax3.xaxis.set_ticks(np.arange(-1, 2.5 ,0.5))
 ax3.yaxis.set_ticks(np.arange(0, 6, 1))
 ax3.set_title('D. 1990-2016')
 ax3.set_ylabel('Number of Sites in \n Grand Canyon')
@@ -155,7 +155,7 @@ ax3.set_ylabel('Number of Sites in \n Grand Canyon')
 #Deficit
 bins=[round(x,1)for x in np.linspace(-1,1,21)]
 counts, division = np.histogram(gc_df_d.loc[:,'Delta_Thick'],bins=bins)
-gc_df_d.loc[:,'Delta_Thick'].hist(ax=ax4, bins=division,color='gray')
+gc_df_d.loc[:,'Delta_Thick'].hist(ax=ax4, bins=division,color='gray',xrot=45,grid=False,width=0.06)
 ax4.xaxis.set_ticks(np.arange(-1, 1.5, 0.5))
 ax4.yaxis.set_ticks(np.arange(0, 5, 1))
 ax4.set_title('E. 1990-2003')
@@ -164,7 +164,7 @@ ax4.set_xlabel('Change in Thickness, in Meters')
 #Enrich
 bins=[round(x,1)for x in np.linspace(-1,1,21)]
 counts, division = np.histogram(gc_df_e.loc[:,'Delta_Thick'].dropna(),bins=bins)
-a = gc_df_e.loc[:,'Delta_Thick'].hist(ax=ax5, bins=division,color='gray')#,hatch='o'
+a = gc_df_e.loc[:,'Delta_Thick'].hist(ax=ax5, bins=division,color='gray',xrot=45,grid=False,width=0.06)#,hatch='o'
 ax5.xaxis.set_ticks(np.arange(-1,1.5, 0.5))
 ax5.yaxis.set_ticks(np.arange(0, 6, 1))
 ax5.set_title('F. 2003-2016')
