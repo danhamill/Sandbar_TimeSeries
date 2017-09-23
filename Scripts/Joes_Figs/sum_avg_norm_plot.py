@@ -95,7 +95,7 @@ if __name__ =='__main__':
     m_size=4
     ls = ['-','--','-.',':','-','--']
     colors=['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c']
-    writer = pd.ExcelWriter(out_root + os.sep + "spagetti_plots" + os.sep +'sum_avg_norm_eddyabv8kdata.xlsx',engine='xlsxwriter')
+    writer = pd.ExcelWriter(out_root + os.sep + "spagetti_plots" + os.sep +'sum_avg_norm_eddyabv8kdata_mergeMaxArea.xlsx',engine='xlsxwriter')
     
     for group1 in [g_1a,g_1b,g_1c,g_2,g_3,g_4]:
         subset = data[data['Site'].isin(group1)]
@@ -108,7 +108,13 @@ if __name__ =='__main__':
         subset = subset[subset['SurveyDate'].isin(common_dates)]
         
         #calculate above 8k metrics
-        subset =  pd.pivot_table(subset,index=['Site','SurveyDate','SitePart','TripDate','SiteRange','Segment','Bar_type','Time_Series','Period'],values=['Area_2D','Area_3D','Volume','Errors','MaxVol','Max_Area'],aggfunc=np.sum).reset_index()
+        subset =  pd.pivot_table(subset,index=['Site','SurveyDate','SitePart','TripDate','SiteRange','Segment','Bar_type','Time_Series','Period'],values=['Area_2D','Area_3D','Volume','Errors','MaxVol'],aggfunc=np.sum).reset_index()
+        subset1 = data[data['Site'].isin(group1)]
+
+        subset1 = pd.pivot_table(subset1,index=['Site','SurveyDate','SitePart','TripDate','SiteRange','Segment','Bar_type','Time_Series','Period'],values=['Max_Area'],aggfunc=np.average).reset_index()
+        subset = subset.merge(subset1, on=['Site','SurveyDate','SitePart','TripDate','SiteRange','Segment','Bar_type','Time_Series','Period'],how='left')
+        del subset1
+        
         subset.loc[:,'Norm_Area']=subset.loc[:,'Area_2D']/subset.loc[:,'Max_Area']
         subset.loc[:,'Norm_Vol'] = subset.loc[:,'Volume']/subset.loc[:,'MaxVol']
         
@@ -162,7 +168,7 @@ if __name__ =='__main__':
     fig.axes[0].set_ylim(0,70000)    
     fig1.axes[0].set_ylim(0,50000)  
     fig1.axes[1].set_ylim(0,15000)
-    fig1.axes[2].set_ylim(0,0.5)
+    #fig1.axes[2].set_ylim(0,1.0)
     
     fig1.axes[2].set_ylabel('NORMALIZED AREA')
     fig.axes[2].set_ylabel('NORMALIZED VOLUME')
@@ -174,8 +180,8 @@ if __name__ =='__main__':
     
     [i.tight_layout() for i in [fig,fig1]]
     [i.subplots_adjust(bottom=0.2) for i in [fig,fig1]]  
-    fig.savefig(out_root + os.sep +'spagetti_plots'+os.sep +'groups_sum_avg_norm_vol_plot.png')
-    fig1.savefig(out_root + os.sep +'spagetti_plots'+os.sep +'groups_sum_avg_norm_area_plot.png')
+    fig.savefig(out_root + os.sep +'spagetti_plots'+os.sep +'groups_sum_avg_norm_vol_plot_mergeMaxArea.png')
+    fig1.savefig(out_root + os.sep +'spagetti_plots'+os.sep +'groups_sum_avg_norm_area_plot_mergeMaxArea.png')
     
     
     writer.save()
